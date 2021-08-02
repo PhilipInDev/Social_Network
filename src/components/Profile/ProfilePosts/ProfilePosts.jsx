@@ -2,37 +2,9 @@ import './ProfilePosts.scss';
 import Post from "./Post/Post";
 import Button from "../../SharedComponents/Button";
 
-const ProfilePosts = () => {
-    let posts = [
-        {
-            id:1,
-            profileLink:'#',
-            name:'Philip',
-            profileImage:'https://s3.cdn.teleprogramma.pro/wp-content/uploads/2020/01/a76ebd11ecf1ab90a360b056f49b90a0.jpg',
-            text:'My 1st post, guys!',
-            likesCount:'17',
-            commentsCount:'1',
-        },
-        {
-            id:2,
-            profileLink:'#',
-            name:'Philip',
-            profileImage:'https://s3.cdn.teleprogramma.pro/wp-content/uploads/2020/01/a76ebd11ecf1ab90a360b056f49b90a0.jpg',
-            text:'My 1st post, guys!',
-            likesCount:'17',
-            commentsCount:'1',
-        },
-        {
-            id:3,
-            profileLink:'#',
-            name:'Philip',
-            profileImage:'https://s3.cdn.teleprogramma.pro/wp-content/uploads/2020/01/a76ebd11ecf1ab90a360b056f49b90a0.jpg',
-            text:'My 1st post, guys!',
-            likesCount:'17',
-            commentsCount:'1',
-        },
-    ]
-    let fulledPosts = posts.map(el=>(
+const ProfilePosts = (props) => {
+
+    let fulledPosts = props.postsData.map(el=>(
             <Post profileLink={el.profileLink}
               name={el.name}
               profileImage={el.profileImage}

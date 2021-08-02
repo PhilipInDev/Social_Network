@@ -3,7 +3,7 @@ import ProfileHeader from "./ProfileHeader/ProfileHeader";
 import ProfileIntro from "./ProfileIntro/ProfileIntro";
 import ProfilePosts from "./ProfilePosts/ProfilePosts";
 
-const Profile = () => {
+const Profile = (props) => {
     return(
         <main className='profile main'>
             <div className='profile__box'>
@@ -18,7 +18,7 @@ const Profile = () => {
                         <ProfileIntro />
                     </div>
                     <div className='profile__col2'>
-                        <ProfilePosts />
+                        <ProfilePosts postsData={props.dataSet.posts}/>
                     </div>
                     <div className='profile__col3'>
 
