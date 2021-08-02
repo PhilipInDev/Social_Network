@@ -1,0 +1,33 @@
+@import "../sharedStyles";
+
+.dialogs{
+  @include mainPageComponentsStyles;
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.dialogs-items{
+  flex: 0 0 25%;
+  max-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.messages-box{
+  flex: 0 0 75%;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  padding: 20px 60px 10px 50px;
+  border-left: 1px solid $smoothCommonOrange;
+}
+.messages{
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}

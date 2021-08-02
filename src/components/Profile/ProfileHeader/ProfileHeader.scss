@@ -1,0 +1,54 @@
+@import "../../sharedStyles";
+
+.profileHeader{
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-bottom: 30px;
+  &__background{
+    img{
+      height: 300px;
+      width: 100%;
+      object-fit: cover;border-radius: 5px 5px 0 0;
+    }
+  }
+  &__menu{
+    width: 100%;
+    height: 100px;
+    background-color: $mainComponentsColor;
+    border-radius: 0 0 5px 5px;
+  }
+}
+.profile-short{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  bottom: 10px;
+  right: 50%;
+  margin-right: -60px;
+  img{
+    box-sizing: border-box;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 6px solid #ffffff;
+  }
+  p{
+    margin: 10px 0 0 0;
+    text-align: center;
+  }
+  a{
+    text-decoration: none;
+  }
+  &__name{
+    font-size: 20px;
+    font-weight: 700;
+    color: $titleTextColor;
+  }
+  &__country{
+    font-weight: 400;
+    font-size: 15px;
+    color: $mainTextColor;
+  }
+}

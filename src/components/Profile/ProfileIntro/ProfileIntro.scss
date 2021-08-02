@@ -1,0 +1,23 @@
+@import "../../sharedStyles";
+.profileIntro{
+  display: flex;
+  flex-direction: column;
+  @include mainPageComponentsStyles;
+
+  &__title-box{
+    width: 100%;
+    min-height: 60px;
+    box-sizing: border-box;
+    border-bottom: 1px solid $mainTextColor;
+    text-align: left;
+    padding-left: 20px;
+  }
+  &__title{
+    line-height: 25px;
+    color: $titleTextColor;
+    font-size: 20px;
+  }
+}
+.intro-box{
+  padding: 10px 20px 10px 20px;
+}

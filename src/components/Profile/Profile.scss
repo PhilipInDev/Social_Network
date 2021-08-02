@@ -1,0 +1,23 @@
+@import "../sharedStyles";
+
+.profile{
+  //&__box{
+  //  width: 90%;
+  //  max-width: 1000px;
+  //  margin: 0 auto;
+  //}
+  &__columns{
+    width: 100%;
+    display: flex;
+    gap: 30px;
+  }
+  &__col1{
+    width: 25%;
+  }
+  &__col2{
+    width: 50%;
+  }
+  &__col3{
+    width: 25%;
+  }
+}

@@ -1,0 +1,17 @@
+@import "../../../sharedStyles";
+.intro-box{
+  h4{
+    font-size: 13px;
+    font-weight: 500;
+    color: $titleTextColor;
+    margin: 5px 0;
+  }
+  p{
+    display: block;
+    white-space: normal;
+    overflow-wrap: break-word;
+    font-size: 12px;
+    font-weight: 300;
+    margin: 0 0 10px 0;
+  }
+}

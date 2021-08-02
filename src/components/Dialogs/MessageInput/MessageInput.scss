@@ -1,0 +1,24 @@
+@import "../../sharedStyles";
+
+.message-input{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 5px;
+  &__textarea{
+    height: 100px;
+    width: 100%;
+    padding: 5px 5px 5px 9px;
+    border-radius: 5px;
+    resize: none;
+    box-shadow: none;
+    outline: 0;
+    border: 1px solid $mainTextColor;
+    transition-duration: 0.2s;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    &:focus{
+      border: 1px solid $commonOrange;
+    }
+  }
+}

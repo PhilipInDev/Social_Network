@@ -1,0 +1,20 @@
+@import '../sharedStyles';
+
+.header{
+  background-color: $headerColor;
+  grid-area: header;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  height: 60px;
+  z-index: 50;
+  &__logo-wrapper{
+    @include flexCenter;
+    background-color: #ff5e3a;
+    height: 100%;
+    width: 60px;
+  }
+  &__logo{
+    font-size: 25px;
+  }
+}

@@ -1,0 +1,21 @@
+@import './components/sharedStyles';
+
+body{
+    background-color: $bodyColor;
+}
+.app-wrapper{
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    grid-template-rows: 60px 1fr;
+    grid-gap: 10px;
+    grid-template-areas:
+        'header header header header'
+        'nav main main main';
+}
+
+.main-wrapper{
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+}

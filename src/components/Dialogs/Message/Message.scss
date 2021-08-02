@@ -1,0 +1,30 @@
+@import "../../sharedStyles";
+
+.message{
+  border-radius: 5px;
+  padding: 7px 45px 8px 7px;
+  display: inline-block;
+  box-sizing: border-box;
+  width: unset;
+  background-color: $dialogColor;
+  position: relative;
+  &__wrapper{
+    display: flex;
+    justify-content: flex-start;
+  }
+  p{
+    display: inline-block;
+  }
+  &__text{
+    font-size: 15px;
+  }
+
+  &__time{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 11px;
+    font-weight: 300;
+  }
+}
+
