@@ -6,12 +6,12 @@ body{
 .app-wrapper{
     height: 100vh;
     display: grid;
-    grid-template-columns: 60px 1fr;
+    grid-template-columns: 1fr;
     grid-template-rows: 60px 1fr;
     grid-gap: 10px;
     grid-template-areas:
-        'header header header header'
-        'nav main main main';
+        'header header'
+        ' main main ';
 }
 
 .main-wrapper{
