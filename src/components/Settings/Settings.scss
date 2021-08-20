@@ -1,1 +1,54 @@
 @import "../sharedStyles";
+
+.settings{
+  @include mainPageComponentsStyles;
+  height: 100%;
+  &__box{
+    display: flex;
+  }
+  &__col1{
+    flex: 1 1 25%;
+    padding: 20px;
+    height: 100%;
+  }
+  &__col2{
+    flex: 1 1 50%;
+    padding: 20px;
+  }
+  &__col3{
+    flex: 1 1 25%;
+  }
+
+}
+.settings-nav{
+  box-sizing: border-box;
+  width: 65%;
+  height: 100%;
+  border-right: 1px solid $headerTextColor;
+  li{
+    list-style: none;
+    margin-bottom: 5px;
+  }
+  &__header{
+    padding: 3px 3px 3px 2px;
+  }
+  &__item{
+    border-bottom: 1px solid $mainTextColor;
+    display: block;
+    width: 100%;
+    padding: 4px;
+    transition: .1s;
+  }
+  a{
+    @include linkReset;
+    width: 100%;
+    &:hover{
+      transition: .1s;
+      color: $commonOrange;
+      li{
+        width: 50%;
+        border-bottom: 1px solid $commonOrange;
+      }
+    }
+  }
+}

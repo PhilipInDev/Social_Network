@@ -1,24 +1,33 @@
 import './Profile.scss'
 import ProfileHeader from "./ProfileHeader/ProfileHeader";
 import ProfileIntro from "./ProfileIntro/ProfileIntro";
-import ProfilePosts from "./ProfilePosts/ProfilePosts";
+import ProfilePostsContainer from "../../containers/ProfilePostsContainer";
+import Preloader from "../SharedComponents/Preloader/Preloader";
 
 const Profile = (props) => {
+    if(!props.profile.userProfile){
+        return <div className='profile'><div className='profile__preloader-box>'> <Preloader /> </div></div>
+    }
+
     return(
         <main className='profile'>
             <div className='profile__box'>
                 <ProfileHeader
-                    background='https://images.ctfassets.net/hrltx12pl8hq/7yQR5uJhwEkRfjwMFJ7bUK/dc52a0913e8ff8b5c276177890eb0129/offset_comp_772626-opt.jpg?fit=fill&w=800&h=300'
-                    avatar='https://s3.cdn.teleprogramma.pro/wp-content/uploads/2020/01/a76ebd11ecf1ab90a360b056f49b90a0.jpg'
-                    name='Bill'
-                    country='pandora'
+                    background={props.profile.userProfile.photos.large}
+                    avatar={props.profile.userProfile.photos.small}
+                    name={props.profile.userProfile.fullName}
+                    country='-'
+                    contacts={props.profile.userProfile.contacts}
                 />
                 <section className='profile__columns'>
                     <div className='profile__col1'>
-                        <ProfileIntro />
+                        <ProfileIntro aboutMe={props.profile.userProfile.aboutMe}
+                                      lookingForAJob={props.profile.userProfile.lookingForAJob}
+                                      lookingForAJobDesc={props.profile.userProfile.lookingForAJobDescription}
+                        />
                     </div>
                     <div className='profile__col2'>
-                        <ProfilePosts postsData={props.dataSet.posts}/>
+                        <ProfilePostsContainer store={props.store} />
                     </div>
                     <div className='profile__col3'>
 

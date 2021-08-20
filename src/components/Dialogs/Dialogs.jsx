@@ -1,11 +1,12 @@
 import './Dialogs.scss';
 import DialogItem from "./DialogItem/DialogItem";
 import Message from "./Message/Message";
-import MessageInput from "./MessageInput/MessageInput";
+import MessageInputContainer from "../../containers/MessageInputContainer";
 
 const Dialogs = (props) => {
-    let messagesElements = props.dataSet.messages.map(el => (<Message message={el.message} time={el.time}/>));
-    let dialogElements = props.dataSet.dialogItems.map(el=>(<DialogItem id={el.id} avatarLink={el.avatarLink} name={el.name} messageName={el.messageName} message={el.message}/>));
+    let state = props.store.getState();
+    let messagesElements = state.dialogs.messages.map(el => (<Message message={el.message} time={el.time} owner={el.owner}/>));
+    let dialogElements = state.dialogs.dialogItems.map(el=>(<DialogItem id={el.id} avatarLink={el.avatarLink} name={el.name} messageName={el.messageName} message={el.message}/>));
     return(
         <div className='dialogs'>
             <div className='dialogs-items'>
@@ -15,7 +16,7 @@ const Dialogs = (props) => {
                 <div className="messages">
                     {messagesElements}
                 </div>
-                <MessageInput />
+                <MessageInputContainer store={props.store} />
             </div>
         </div>
     )

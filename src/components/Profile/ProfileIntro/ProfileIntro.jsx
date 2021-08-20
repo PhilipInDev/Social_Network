@@ -1,7 +1,9 @@
 import './ProfileIntro.scss'
 import IntroItem from "./IntroItem/IntroItem";
 
-const ProfileIntro = () => {
+const ProfileIntro = (props) => {
+    const lookingForAJob = props.lookingForAJob ? <IntroItem title='Job preferences' text={props.lookingForAJobDesc}/> : null;
+    const aboutMe = props.aboutMe ? <IntroItem title='About Me' text={props.aboutMe}/> : null;
     return(
         <div className='profileIntro'>
             <div className='profileIntro__title-box'>
@@ -9,21 +11,8 @@ const ProfileIntro = () => {
             </div>
             <div className='profileIntro__box intro-box'>
                 <IntroItem title='Date of Birth' text='27.10.2000'/>
-                <div className='intro-box__item' id='introBoxStudyWork'>
-                    <h4>Study/Work:</h4>
-                    <p>KHNMU</p>
-                </div>
-                <div className='intro-box__item' id='introBoxAbout'>
-                    <h4>About Me:</h4>
-                    <p>loreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeemm</p>
-                </div>
-                <div className='intro-box__item' id='introBoxAbout'>
-                    <h4>About Me</h4>
-                    <p></p>
-                </div>
-                <div className='intro-box__item' id='introBoxFavourite'>
-                    <h4>About Me</h4><p></p>
-                </div>
+                {aboutMe}
+                {lookingForAJob}
             </div>
         </div>
     )

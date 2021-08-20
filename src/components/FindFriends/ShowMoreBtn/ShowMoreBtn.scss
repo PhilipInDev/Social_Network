@@ -1,0 +1,23 @@
+@import "../../sharedStyles";
+
+.show-more-btn{
+  height: 40px;
+  width: 100%;
+  border-radius: 10px;
+  @include flexCenter;
+  &__btn{
+    @include buttonReset;
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+    i{
+      color: $commonOrange;
+    }
+    p{
+      font-size: 16px;
+    }
+    &:hover{
+      background-color: #fff8f3;
+    }
+  }
+}

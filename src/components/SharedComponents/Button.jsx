@@ -2,7 +2,7 @@ import './Button.scss'
 
 const Button = (props) => {
     return(
-        <button className="commonButton">{props.inner}</button>
+        <button className={props.disabled ? 'commonButton commonButton--disabled' :  'commonButton'}>{props.inner}</button>
     )
 }
 

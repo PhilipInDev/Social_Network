@@ -3,6 +3,8 @@
 .header{
   background-color: $headerColor;
   grid-area: header;
+  display: flex;
+  gap: 35px;
   width: 100%;
   position: fixed;
   top: 0;
@@ -16,5 +18,33 @@
   }
   &__logo{
     font-size: 25px;
+  }
+  &__title{
+    line-height: 2;
+    font-size: 18px;
+    color: $bodyColor;
+
+  }
+  &__find-friends-btn{
+    height: 100%;
+    font-size: 14px;
+    color: $bodyColor;
+    text-decoration: none;
+    line-height: 60px;
+    transition: .1s;
+
+    &:hover{
+      color: $commonOrange;
+    }
+    &.active{
+      color: $commonOrange;
+    }
+  }
+  &__user-login-box{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px 15px 5px 5px;
+    flex-grow: 1;
   }
 }

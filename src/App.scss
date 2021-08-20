@@ -8,7 +8,7 @@ body{
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 60px 1fr;
-    grid-gap: 10px;
+    grid-row-gap: 30px;
     grid-template-areas:
         'header header'
         ' main main ';
@@ -18,4 +18,5 @@ body{
     width: 90%;
     max-width: 1000px;
     margin: 0 auto;
+    padding-bottom: 100px;
 }
