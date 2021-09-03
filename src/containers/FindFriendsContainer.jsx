@@ -1,6 +1,9 @@
 import {connect} from "react-redux";
 import React from 'react';
 import {
+    deleteFriend,
+    getAdditionalUsers,
+    getUsers, postAddFriend,
     setCurrentPage,
     setTotalCount,
     setUsers,
@@ -10,24 +13,16 @@ import {
 } from "../reducers/findFriends";
 import FindFriends from "../components/FindFriends/FindFriends";
 import {withRouter} from "react-router-dom";
-import {getUsers} from "../api/api";
+import {withAuthRedirect} from "../hoc/withAuthRedirect";
+import {compose} from "redux";
 
 
 
-class FindFriendContainer extends React.Component{
-
+class FindFriendsContainer extends React.Component{
     componentDidMount() {
         let urlPageNum = +this.props.match.params.page;
         if(!urlPageNum) urlPageNum = 1;
-
-        this.props.setCurrentPage(urlPageNum);
-        this.props.toggleIsFetching(true);
-        getUsers(this.props.usersCount, urlPageNum)
-            .then((data) => {
-                this.props.toggleIsFetching(false);
-                this.props.setUsers(data.items);
-                this.props.setTotalCount(data.totalCount);
-            });
+        this.props.getUsers(this.props.usersCount, urlPageNum)
     }
     render(){
         return(
@@ -35,7 +30,6 @@ class FindFriendContainer extends React.Component{
         )
     }
 }
-
 
 const mapStateToProps = (state) => {
     return{
@@ -73,18 +67,45 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 */
-const findFriendsWithRouter = withRouter(FindFriendContainer)
 
-const FindFriendsContainer = connect(mapStateToProps,
-    {
-        toggleFriend,
-        setUsers,
-        setUsersCount,
-        setTotalCount,
-        setCurrentPage,
-        toggleIsFetching,
-        toggleAddingFriend,
-        toggleWhichFriendIsAdding
-    })(findFriendsWithRouter)
 
-export default FindFriendsContainer;
+//
+// let authRedirectComponent = withAuthRedirect(FindFriendContainer);
+//
+// const findFriendsWithRouter = withRouter(authRedirectComponent);
+//
+// const FindFriendsContainer = connect(mapStateToProps,
+//     {
+//         toggleFriend,
+//         setUsers,
+//         setUsersCount,
+//         setTotalCount,
+//         setCurrentPage,
+//         toggleIsFetching,
+//         toggleAddingFriend,
+//         toggleWhichFriendIsAdding,
+//         getUsers,
+//         getAdditionalUsers,
+//         postAddFriend,
+//         deleteFriend
+//     })(findFriendsWithRouter)
+
+export default compose(
+    connect(mapStateToProps,
+        {
+            toggleFriend,
+            setUsers,
+            setUsersCount,
+            setTotalCount,
+            setCurrentPage,
+            toggleIsFetching,
+            toggleAddingFriend,
+            toggleWhichFriendIsAdding,
+            getUsers,
+            getAdditionalUsers,
+            postAddFriend,
+            deleteFriend
+        }),
+    withRouter,
+    withAuthRedirect
+)(FindFriendsContainer);

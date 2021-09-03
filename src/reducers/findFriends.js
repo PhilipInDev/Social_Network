@@ -5,6 +5,7 @@ import {
     SET_USERS_COUNT,
     TOGGLE_FRIEND, TOGGLE_IS_ADDING_FRIEND, TOGGLE_IS_FETCHING, TOGGLE_WHICH_FRIEND_IS_ADDING
 } from "../constants/actionTypes";
+import {FollowAPI, UsersAPI} from "../api/api";
 
 const initialState = {
     users: [],
@@ -97,4 +98,51 @@ export const toggleWhichFriendIsAdding = (userId) => ({
     type: TOGGLE_WHICH_FRIEND_IS_ADDING,
     id: userId
 })
+
+export const getUsers = (usersCount, pageNum) => (dispatch) => {
+    dispatch(setCurrentPage(pageNum));
+    dispatch(toggleIsFetching(true));
+    UsersAPI.getUsers(usersCount, pageNum)
+        .then((data) => {
+            dispatch(toggleIsFetching(false));
+            dispatch(setUsers(data.items));
+            dispatch(setTotalCount(data.totalCount));
+        });
+}
+
+export const getAdditionalUsers = (usersCount, pageNum, usersAddTo) => (dispatch) => {
+    dispatch(toggleIsFetching(true));
+    UsersAPI.getUsers(usersCount, pageNum)
+        .then((data) => {
+            dispatch(toggleIsFetching(false));
+            dispatch(setUsers([...usersAddTo, ...data.items]));
+            dispatch(setCurrentPage(pageNum));
+        });
+}
+
+export const postAddFriend = (id) => (dispatch) => {
+    dispatch(toggleAddingFriend(true));
+    dispatch(toggleWhichFriendIsAdding(id));
+    FollowAPI.postAddFriend(id)
+        .then((data) => {
+            if(!data.resultCode){
+                dispatch(toggleAddingFriend(false));
+                dispatch(toggleWhichFriendIsAdding(id));
+                dispatch(toggleFriend(id, true));
+            }
+        })
+}
+
+export const deleteFriend = (id) => (dispatch) => {
+    dispatch(toggleAddingFriend(true));
+    dispatch(toggleWhichFriendIsAdding(id));
+    FollowAPI.deleteFriend(id)
+        .then((data) => {
+            if(!data.resultCode){
+                dispatch(toggleAddingFriend(false));
+                dispatch(toggleWhichFriendIsAdding(id));
+                dispatch(toggleFriend(id, false));
+            }
+        })
+}
 export default findFriendsReducer;

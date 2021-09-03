@@ -1,11 +1,8 @@
 import './Pagination.scss'
 import React from 'react';
 import {NavLink} from "react-router-dom";
-import axios from "axios";
-import {getUsers} from "../../../api/api";
 
 class Pagination extends React.Component{
-
 
     mapPageLinks = (startNum = 1) => {
         let linksCount = this.props.pagesCount;
@@ -50,14 +47,8 @@ class Pagination extends React.Component{
         return linksArr;
     }
     changeCurrentPageOnClick = (page) => {
-        this.props.toggleIsFetching(true);
-        this.props.changeCurrentPage(page);
         window.scrollTo( 0, 0 );
-        getUsers(this.props.usersCount, page)
-            .then((data) => {
-                    this.props.setUsers(data.items);
-                    this.props.toggleIsFetching(false);
-                })
+        this.props.getUsers(this.props.usersCount, page)
     }
     arrowOnClick = (mod) =>{
         window.scrollTo( 0, 0 );

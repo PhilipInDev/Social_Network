@@ -9,43 +9,62 @@ const instanceAxios = axios.create({
 })
 
 
-
-export const getUsers = (usersCount = 10, page = 1) => {
-    return instanceAxios
-        .get(`users?count=${usersCount}&page=${page}`)
-        .then((response) => response.data)
+export const UsersAPI = {
+    getUsers(usersCount = 10, page = 1) {
+        return instanceAxios
+            .get(`users?count=${usersCount}&page=${page}`)
+            .then((response) => response.data)
+    },
 }
 
-export const postAddFriend = (id = 1) => {
-    return instanceAxios
-        .post(`follow/${id}`)
-        .then((response) => response.data)
+export const ProfileAPI = {
+    getUserProfileData(id) {
+        return instanceAxios
+            .get(`profile/${id}`)
+            .then((response) => response.data)
+    },
+    putUsersPhoto(img) {
+        return instanceAxios
+            .put('/profile/photo', img, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then((response) => response.data)
+    }
 }
 
-export const deleteFriend = (id) => {
-    return instanceAxios
-        .delete(`follow/${id}`)
-        .then((response) => response.data)
+export const FollowAPI = {
+    postAddFriend(id = 1) {
+        return instanceAxios
+            .post(`follow/${id}`)
+            .then((response) => response.data)
+    },
+    deleteFriend(id) {
+        return instanceAxios
+            .delete(`follow/${id}`)
+            .then((response) => response.data)
+    }
 }
-
-export const getAuthUserData = () => {
-    return instanceAxios
-        .get('auth/me')
-        .then((response) => response.data)
-}
-
-export const getUserProfileData = (id) => {
-    return instanceAxios
-        .get(`profile/${id}`)
-        .then((response) => response.data)
-}
-
-export const putUsersPhoto = (img) => {
-    return instanceAxios
-        .put('/profile/photo', img, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-        .then((response) => response.data)
+export const AuthAPI = {
+    getAuthUserData() {
+        return instanceAxios
+            .get('auth/me')
+            .then((response) => response.data)
+    },
+    authorize(email, password, rememberMe){
+        return instanceAxios
+            .post('auth/login', {
+                email: email,
+                password: password,
+                rememberMe: rememberMe,
+                captcha: true
+            })
+            .then((response) => response.data)
+    },
+    unAuthorize(){
+        return instanceAxios
+            .delete('auth/login')
+            .then((response) => response.data)
+    }
 }

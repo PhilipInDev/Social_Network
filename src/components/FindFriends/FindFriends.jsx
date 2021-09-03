@@ -2,11 +2,8 @@ import './FindFriends.scss'
 import UserItem from "./UserItem/UserItem";
 import SearchFilters from "./SearchFilters/SearchFilters";
 import ShowMoreBtn from "./ShowMoreBtn/ShowMoreBtn";
-import axios from "axios";
 import React from 'react';
 import Pagination from "./Pagination/Pagination";
-import {getUsers} from "../../api/api";
-import {toggleWhichFriendIsAdding} from "../../reducers/findFriends";
 
 class FindFriends extends React.Component{
     mapUserItems = () => {
@@ -17,21 +14,14 @@ class FindFriends extends React.Component{
                       status={item.status}
                       isFriend={item.followed}
                       id={item.id}
-                      toggleFriend={this.props.toggleFriend}
-                      toggleAddindFriend={this.props.toggleAddingFriend}
                       whichFriendIsAdding={this.props.whichFriendIsAdding}
-                      toggleWhichFriendIsAdding={this.props.toggleWhichFriendIsAdding}
+                      postAddFriend={this.props.postAddFriend}
+                      deleteFriend={this.props.deleteFriend}
             />)
     }
 
     showMoreUsersOnClick = () => {
-        this.props.toggleIsFetching(true);
-        getUsers(this.props.usersCount, this.props.currentPage + 1)
-            .then((data) => {
-                this.props.toggleIsFetching(false);
-                this.props.setUsers([...this.props.users, ...data.items]);
-                this.props.setCurrentPage(this.props.currentPage + 1);
-            });
+        this.props.getAdditionalUsers(this.props.usersCount,this.props.currentPage + 1, this.props.users)
     }
 
     render() {
@@ -56,9 +46,8 @@ class FindFriends extends React.Component{
                         changeCurrentPage = {this.props.setCurrentPage}
                         currentPage={this.props.currentPage}
                         pagesCount={pagesCount}
-                        setUsers={this.props.setUsers}
                         usersCount={this.props.usersCount}
-                        toggleIsFetching={this.props.toggleIsFetching}
+                        getUsers={this.props.getUsers}
                     />
                 </div>
             </div>

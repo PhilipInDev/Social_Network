@@ -1,5 +1,14 @@
 @import '../sharedStyles';
 
+@keyframes headerIntroAnim {
+   from{
+     transform: translateY(-60px);
+   }
+  to{
+    transform: translateY(0px);
+  }
+}
+
 .header{
   background-color: $headerColor;
   grid-area: header;
@@ -10,6 +19,7 @@
   top: 0;
   height: 60px;
   z-index: 50;
+  animation: headerIntroAnim .8s;
   &__logo-wrapper{
     @include flexCenter;
     background-color: #ff5e3a;
@@ -20,7 +30,7 @@
     font-size: 25px;
   }
   &__title{
-    line-height: 2;
+    @include flexCenter;
     font-size: 18px;
     color: $bodyColor;
 
@@ -28,9 +38,9 @@
   &__find-friends-btn{
     height: 100%;
     font-size: 14px;
+    @include flexCenter;
     color: $bodyColor;
     text-decoration: none;
-    line-height: 60px;
     transition: .1s;
 
     &:hover{

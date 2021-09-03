@@ -1,11 +1,19 @@
 import {connect} from "react-redux";
 import Settings from "../components/Settings/Settings";
-import {setAuthUserProfile} from "../reducers/auth";
+import {putNewUserPhotoAndRefreshProfileState, setAuthUserProfile} from "../reducers/auth";
+import {withAuthRedirect} from "../hoc/withAuthRedirect";
+import {compose} from "redux";
 
 
 const mapStateToProps = (state) => ({
-    photo: state.auth.authorizedUserProfile.photos.small,
+    photo: state.auth.authorizedUserProfile?.photos.small,
     authUserId: state.auth.id
 })
 
-export default connect(mapStateToProps, { setAuthUserProfile })(Settings)
+export default compose(
+    connect(mapStateToProps, {
+        setAuthUserProfile,
+        putNewUserPhotoAndRefreshProfileState
+    }),
+    withAuthRedirect
+)(Settings);

@@ -2,7 +2,6 @@ import './ProfileSettings.scss'
 import {useState} from "react";
 import Button from "../../SharedComponents/Button";
 import defAvatar from '../../../assets/images/defaultAvatar.png';
-import {getUserProfileData, putUsersPhoto} from "../../../api/api";
 
 const ProfileSettings = (props) => {
     let [file, setFile] = useState(null);
@@ -20,16 +19,7 @@ const ProfileSettings = (props) => {
             file,
             file.name
         );
-        console.log(formData)
-        putUsersPhoto(formData)
-            .then((response)=>{
-                if(!response.resultCode){
-                    getUserProfileData(props.authUserId)
-                        .then((profileData) => {
-                            props.setAuthUserProfile(profileData)
-                        })
-                }
-            })
+        props.putNewUserPhotoAndRefreshProfileState(formData, props.authUserId)
     }
     let imgForPreview = props.photo ? props.photo : defAvatar;
     return(

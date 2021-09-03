@@ -12,6 +12,15 @@
   box-sizing: border-box;
 }
 
+@keyframes navIntroAnim {
+  from{
+    transform: translateX(-60px);
+  }
+  to{
+    transform: translateX(0px);
+  }
+}
+
 .nav{
   background-color: #ffffff;
   height: 100%;
@@ -21,6 +30,7 @@
   top: 60px;
   z-index: 50;
   transition: 0.2s;
+  animation: navIntroAnim .8s;
   &__list{
     padding: 0;
     margin-top: 15px;

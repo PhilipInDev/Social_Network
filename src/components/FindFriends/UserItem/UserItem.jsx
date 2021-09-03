@@ -3,7 +3,6 @@ import Button from "../../SharedComponents/Button";
 import React from "react";
 import defaultAvatar from '../../../assets/images/defaultAvatar.png'
 import {NavLink} from "react-router-dom";
-import {deleteFriend, postAddFriend} from "../../../api/api";
 
 class UserItem extends React.Component{
     constructor(props) {
@@ -19,30 +18,12 @@ class UserItem extends React.Component{
 
     toggleFriendOnClick = () => {
         if(!this.props.isFriend){
-            this.props.toggleAddindFriend(true);
-            this.props.toggleWhichFriendIsAdding(this.props.id);
-            postAddFriend(this.props.id)
-                .then((data) => {
-                    if(!data.resultCode){
-                        this.props.toggleAddindFriend(false);
-                        this.props.toggleWhichFriendIsAdding(this.props.id);
-                        this.changeButtonInner();
-                        this.props.toggleFriend(this.props.id, true);
-                    }
-                })
+            this.props.postAddFriend(this.props.id);
+            this.changeButtonInner();
         }
         if(this.props.isFriend){
-            this.props.toggleAddindFriend(true);
-            this.props.toggleWhichFriendIsAdding(this.props.id);
-            deleteFriend(this.props.id)
-                .then((data) => {
-                    if(!data.resultCode){
-                        this.props.toggleAddindFriend(false);
-                        this.props.toggleWhichFriendIsAdding(this.props.id);
-                        this.changeButtonInner();
-                        this.props.toggleFriend(this.props.id, false);
-                    }
-                })
+            this.props.deleteFriend(this.props.id);
+            this.changeButtonInner();
         }
     }
     render(){

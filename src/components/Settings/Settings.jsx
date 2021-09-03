@@ -13,10 +13,13 @@ const Settings = (props) => {
                     </ul>
                 </div>
                 <div className="settings__col2">
-                    <Route path='/settings/profile' render={() => <ProfileSettings photo={props.photo}
-                                                                                   authUserId={props.authUserId}
-                                                                                   setAuthUserProfile={props.setAuthUserProfile}
-                    />} />
+                    <Route path='/settings/profile' render={() =>
+                        <ProfileSettings
+                            photo={props.photo}
+                            authUserId={props.authUserId}
+                            putNewUserPhotoAndRefreshProfileState={props.putNewUserPhotoAndRefreshProfileState}
+                        />}
+                    />
                 </div>
                 <div className="settings__col3"></div>
             </div>

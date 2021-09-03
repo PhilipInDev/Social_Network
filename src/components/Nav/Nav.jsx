@@ -2,14 +2,14 @@ import './Nav.scss'
 import {NavLink} from "react-router-dom";
 import React, { useState } from 'react';
 
-const Nav = () => {
+const Nav = (props) => {
     const navBarRef = React.createRef()
     const [isNavBarOpened, toggleNavBarOpening] = useState(false);
 
     const burgerOnClick = () => {
         toggleNavBarOpening(!isNavBarOpened)
     }
-
+    if(!props.isAuth) return null;
     return(
         <nav className={isNavBarOpened ? 'nav nav--opened' : 'nav'} ref={navBarRef}>
             <ul className='nav__list'>

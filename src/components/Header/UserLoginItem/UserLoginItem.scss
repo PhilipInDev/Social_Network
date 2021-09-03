@@ -17,7 +17,7 @@
 
   &__sign-up{
     box-sizing: border-box;
-    border: 2px solid $smoothCommonOrange;
+    border: 1px solid $smoothCommonOrange;
     border-radius: 5px;
     padding: 3px;
   }
@@ -25,9 +25,11 @@
 
 
 .user-login-item{
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  cursor: default;
   &__avatar{
     width: 40px;
     height: 40px;
@@ -41,6 +43,32 @@
 
   &__login{
     color: $mainTextColor;
-
+  }
+  $loginItemLiCount: 1;
+  &__options-menu{
+    height: 25px * $loginItemLiCount;
+    width: 120px;
+    background-color: $headerColor;
+    border-radius: 5px 0 5px 0;
+    box-sizing: border-box;
+    position: absolute;
+    bottom: -25px * $loginItemLiCount - 11px;
+    right: 50%;
+    ul{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+    }
+    li{
+      padding: 3px 3px 3px 6px;
+    }
+    a{
+      @include linkReset;
+      display: block;
+      &:hover{
+        color: white;
+      }
+    }
   }
 }
