@@ -1,11 +1,11 @@
-import {
-    SET_AUTH_USER_PROFILE,
-    SET_ME,
-    TOGGLE_AUTH,
-    TOGGLE_IS_AUTH_DATA_INCORRECT,
-    TOGGLE_IS_AUTHORIZING
-} from "../constants/actionTypes";
 import {AuthAPI, ProfileAPI} from "../api/api";
+
+export const SET_ME = 'SET_USER_DATA';
+export const SET_AUTH_USER_PROFILE = 'SET_AUTH_USER_PROFILE';
+export const TOGGLE_AUTH = 'TOGGLE_AUTH';
+export const TOGGLE_IS_AUTH_DATA_INCORRECT = 'TOGGLE_IS_AUTH_DATA_INCORRECT';
+export const TOGGLE_IS_AUTHORIZING = 'TOGGLE_IS_AUTHORIZING';
+export const SET_AUTH_USER_STATUS = 'SET_AUTH_USER_STATUS';
 
 const initialState = {
     id: null,
@@ -14,7 +14,8 @@ const initialState = {
     isAuth: false,
     isAuthorizing: false,
     isAuthDataIncorrect: false,
-    authorizedUserProfile: null
+    authorizedUserProfile: null,
+    authUserStatus: ''
 }
 
 const authReducer = (state = initialState, action) => {
@@ -44,6 +45,11 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 isAuthorizing: action.isAuthorizing
             }
+        case SET_AUTH_USER_STATUS:
+            return{
+                ...state,
+                authUserStatus: action.authUserStatus
+            }
         default:
             return state;
     }
@@ -72,6 +78,11 @@ export const toggleIsAuthorizing = (isAuthorizing) => ({
     isAuthorizing: isAuthorizing
 })
 
+export const setAuthUserStatus = (authUserStatus) => ({
+    type: SET_AUTH_USER_STATUS,
+    authUserStatus: authUserStatus
+})
+
 export const putNewUserPhotoAndRefreshProfileState = (formData, authUserId) => (dispatch) =>{
     ProfileAPI.putUsersPhoto(formData)
         .then((response)=>{
@@ -84,20 +95,18 @@ export const putNewUserPhotoAndRefreshProfileState = (formData, authUserId) => (
         })
 }
 
-export const getAuthUserDataAndGetSetAuthUserProfileData = () => (dispatch) => {
+export const getAuthUserDataAndGetSetAuthUserProfileData = () => async (dispatch) => {
     dispatch(toggleIsAuthorizing(true));
-    return AuthAPI.getAuthUserData()
-        .then((data) => {
-            if(!data.resultCode){
-                dispatch(toggleAuth(true));
-                dispatch(setMe(data.data));
-                ProfileAPI.getUserProfileData(data.data.id)
-                    .then((profileData) => {
-                        dispatch(toggleIsAuthorizing(false));
-                        dispatch(setAuthUserProfile(profileData));
-                    })
-            }
-        })
+    let data = await AuthAPI.getAuthUserData()
+    if(!data.resultCode) {
+        dispatch(toggleAuth(true));
+        dispatch(setMe(data.data));
+        let profileData = await ProfileAPI.getUserProfileData(data.data.id);
+        let status = await ProfileAPI.getUserStatus(data.data.id);
+        dispatch(setAuthUserProfile(profileData));
+        dispatch(setAuthUserStatus(status));
+    }
+    dispatch(toggleIsAuthorizing(false));
 }
 export const getAuthUserData = () => (dispatch) => {
     dispatch(toggleIsAuthorizing(true))
@@ -129,12 +138,20 @@ export const authorize = (email, password, rememberMe) => (dispatch) => {
 export const unAuthorize = () => (dispatch) => {
     AuthAPI.unAuthorize()
         .then((data) => {
-            if(!data.resultCode){
+            if (!data.resultCode) {
                 dispatch(toggleAuth(false));
                 dispatch(setAuthUserProfile(initialState.authorizedUserProfile));
                 dispatch(setMe(null));
             }
         })
+}
+export const refreshAuthUserProfileData = (profileData) => async (dispatch) => {
+    const dataResult = await ProfileAPI.putUserProfile(profileData)
+    if(!dataResult.resultCode){
+        const authUserData = await AuthAPI.getAuthUserData();
+        const authUserProfileData = await ProfileAPI.getUserProfileData(authUserData.data.id);
+        dispatch(setAuthUserProfile(authUserProfileData));
+    }
 }
 
 export default authReducer;

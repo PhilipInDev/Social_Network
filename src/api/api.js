@@ -3,11 +3,15 @@ import axios from "axios";
 const instanceAxios = axios.create({
     withCredentials: true,
     headers: {
-        'API-KEY': '0b787501-60fb-4d98-abcc-ccdba70f8547'
+        'API-KEY': '6f32a2b4-d8b8-4517-bfb3-660238968bfb'
     },
     baseURL: 'https://social-network.samuraijs.com/api/1.0/'
 })
 
+const requestCommonThen = (request) => {
+    return request()
+        .then((response) => response.data)
+}
 
 export const UsersAPI = {
     getUsers(usersCount = 10, page = 1) {
@@ -20,17 +24,35 @@ export const UsersAPI = {
 export const ProfileAPI = {
     getUserProfileData(id) {
         return instanceAxios
-            .get(`profile/${id}`)
+            .get(`/profile/${id}`)
             .then((response) => response.data)
     },
-    putUsersPhoto(img) {
+    putUsersPhoto(formData) {
         return instanceAxios
-            .put('/profile/photo', img, {
+            .put('/profile/photo', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             })
             .then((response) => response.data)
+    },
+    getUserStatus(id){
+        return requestCommonThen(() =>
+            instanceAxios
+                .get(`/profile/status/${id}`)
+        )
+    },
+    putUserStatus(status){
+        return requestCommonThen( () =>
+            instanceAxios
+                .put('/profile/status', status)
+        )
+    },
+    putUserProfile(profileData){
+        return requestCommonThen(() =>
+            instanceAxios
+                .put('profile', profileData)
+        )
     }
 }
 

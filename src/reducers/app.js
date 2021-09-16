@@ -1,4 +1,5 @@
-import {TOGGLE_INITIALIZED} from "../constants/actionTypes";
+
+export const TOGGLE_INITIALIZED = 'TOGGLE_INITIALIZED';
 
 const initialState = {
     initialized: false

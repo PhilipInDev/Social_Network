@@ -43,6 +43,38 @@
 
   &__login{
     color: $mainTextColor;
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  &__arrow-box{
+    position: relative;
+    transition: .3s;
+    width: 100%;
+    height: 20px;
+    cursor: pointer;
+    &:before,&:after{
+      position: absolute;
+      content: '';
+      left: 50%;
+      top: 50%;
+      width: 10px;
+      height: 2px;
+      border-radius: 5px;
+      background-color: $bodyColor;
+    }
+    &:after{
+      transform: rotate(35deg);
+      margin-left: -8px;
+    }
+    &:before{
+      transform: rotate(-35deg);
+      margin-left: -1px;
+    }
+    &--opened{
+      transform: rotateX(180deg);
+    }
   }
   $loginItemLiCount: 1;
   &__options-menu{
@@ -52,8 +84,8 @@
     border-radius: 5px 0 5px 0;
     box-sizing: border-box;
     position: absolute;
-    bottom: -25px * $loginItemLiCount - 11px;
-    right: 50%;
+    bottom: -25px * $loginItemLiCount - 8px;
+    right: 70px;
     ul{
       list-style: none;
       padding: 0;

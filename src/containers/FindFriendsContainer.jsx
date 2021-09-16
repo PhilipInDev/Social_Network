@@ -15,14 +15,35 @@ import FindFriends from "../components/FindFriends/FindFriends";
 import {withRouter} from "react-router-dom";
 import {withAuthRedirect} from "../hoc/withAuthRedirect";
 import {compose} from "redux";
-
+import {UsersAPI} from "../api/api";
 
 
 class FindFriendsContainer extends React.Component{
     componentDidMount() {
-        let urlPageNum = +this.props.match.params.page;
-        if(!urlPageNum) urlPageNum = 1;
-        this.props.getUsers(this.props.usersCount, urlPageNum)
+        window.scrollTo( 0, 0 );
+        let urlPageNum = this.props.location.search ? this.props.location.search.match(/[0-9]+/gi)[0] : 1;
+        this.props.getUsers(this.props.usersCount, urlPageNum);
+        //     .then(() => countGoodUsers());
+        // const countGoodUsers = async () => {
+        //     const pagesCount = Math.ceil(this.props.totalCount / 100);
+        //     let usersArray = [];
+        //     let i = 1;
+        //         setInterval(() => {
+        //             if(i === pagesCount) return;
+        //             UsersAPI.getUsers(100, i)
+        //                 .then((data) => {
+        //                     for(let j = 0; j < data.items.length; j++){
+        //                         if(data.items[j].photos.small){
+        //                             usersArray.push(data.items[j])
+        //                         }
+        //                     }
+        //                     i++;
+        //                     console.log(`Good users count: ${usersArray.length}.
+        //                                 Total users count: ${this.props.totalCount}.
+        //                                 Ratio: ${usersArray.length / this.props.totalCount}`)
+        //                 })
+        //         }, 1000)
+        // }
     }
     render(){
         return(

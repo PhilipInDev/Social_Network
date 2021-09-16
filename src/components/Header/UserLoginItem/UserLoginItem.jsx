@@ -1,27 +1,9 @@
 import './UserLoginItem.scss'
 import defAvatar from '../../../assets/images/defaultAvatar.png'
 import {NavLink} from "react-router-dom";
-import {useEffect, useRef, useState} from "react";
+import {useRef, useState} from "react";
+import {useOutsideAlerter} from "../../SharedComponents/sharedFunc";
 
-
-function useOutsideAlerter(ref, callback) {
-    useEffect(() => {
-        /**
-         * Alert if clicked on outside of element
-         */
-        function handleClickOutside(event) {
-            if (ref.current && !ref.current.contains(event.target)) {
-                callback(false)
-            }
-        }
-        // Bind the event listener
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            // Unbind the event listener on clean up
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [ref]);
-}
 
 const UserLoginItem = (props) => {
     let [isOptionMenuOpened, toggleOptionMenu] = useState(false);
@@ -38,19 +20,29 @@ const UserLoginItem = (props) => {
     const optionsMenu =(
         <div className='user-login-item__options-menu' >
             <ul>
-                <li><NavLink to='/login' onClick={() => props.unAuthorize()}>Log Out</NavLink></li>
+                <li><NavLink to='#' onClick={() => props.unAuthorize()}>Log Out</NavLink></li>
             </ul>
         </div>)
     const showLoginItemOptions = () => {
             toggleOptionMenu(!isOptionMenuOpened)
     }
     return(
-        <div className="user-login-item" onClick={showLoginItemOptions} ref={optionsMenuRef}>
+        <div className="user-login-item" ref={optionsMenuRef}>
             <img src={props.avatar ? props.avatar : defAvatar} alt="Authorized User Img" className="user-login-item__avatar"/>
             <div className="user-login-item__info">
                 <p className="user-login-item__login">
                     {props.login}
                 </p>
+                <div
+                    className={
+                        !isOptionMenuOpened
+                        ? 'user-login-item__arrow-box'
+                        : 'user-login-item__arrow-box user-login-item__arrow-box--opened'
+                    }
+                    onClick={showLoginItemOptions}>
+                    <span/>
+                    <span/>
+                </div>
             </div>
             {isOptionMenuOpened ? optionsMenu : null}
         </div>

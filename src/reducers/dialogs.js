@@ -1,4 +1,6 @@
-import {SEND_MESSAGE, UPDATE_NEW_MESSAGE_TEXT} from "../constants/actionTypes";
+
+export const UPDATE_NEW_MESSAGE_TEXT = 'UPDATE_NEW_MESSAGE_TEXT';
+export const SEND_MESSAGE = 'SEND_MESSAGE';
 
 const initialState = {
     title: 'Dialogs',

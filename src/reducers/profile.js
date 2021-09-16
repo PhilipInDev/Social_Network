@@ -1,9 +1,17 @@
-import {ADD_POST, SET_USER_PROFILE, UPDATE_NEW_POST_TEXT} from "../constants/actionTypes";
 import {ProfileAPI} from "../api/api";
+
+export const SET_USER_PROFILE = 'SET_USER_PROFILE';
+export const TOGGLE_IS_GETTING_PROFILE_DATA = 'TOGGLE_IS_GETTING_PROFILE_DATA';
+//-- posts
+export const ADD_POST = 'ADD_POST';
+export const UPDATE_NEW_POST_TEXT = 'UPDATE_NEW_POST_TEXT';
+export const SET_USER_STATUS = 'SET_USER_STATUS';
 
 const initialState = {
     title: 'Profile',
     userProfile: null,
+    userStatus: '',
+    isGettingProfileData: false,
     posts: [
         {
             id: 1,
@@ -62,6 +70,16 @@ const profileReducer = (state = initialState, action) => {
                 ...state,
                 userProfile: action.profile
             }
+        case SET_USER_STATUS:
+            return {
+                ...state,
+                userStatus: action.status
+            }
+        case TOGGLE_IS_GETTING_PROFILE_DATA:
+            return{
+                ...state,
+                isGettingProfileData: action.isGettingProfileData
+            }
         default:
             return state;
     }
@@ -80,11 +98,42 @@ export const setUserProfile = (profile) => ({
     profile
 })
 
-export const getUserProfileData = (userId) => (dispatch) => {
-    ProfileAPI.getUserProfileData(userId)
-        .then((profileData) => {
-            dispatch(setUserProfile(profileData))
-        });
+export const toggleIsGettingProfileData = (isGettingProfileData) => ({
+    type: TOGGLE_IS_GETTING_PROFILE_DATA,
+    isGettingProfileData
+})
+
+export const getUserProfileData = (userId) => async (dispatch) => {
+    const profileData = await ProfileAPI.getUserProfileData(userId);
+    dispatch(setUserProfile(profileData));
+}
+
+export const setUserStatus = (status) => ({
+    type: SET_USER_STATUS,
+    status
+})
+
+export const getUserStatus = (id) => async (dispatch) => {
+    const data = await ProfileAPI.getUserStatus(id);
+    dispatch(setUserStatus(data));
+}
+
+export const putUserStatus = (status) => (dispatch) => {
+    dispatch(setUserStatus(status.status));
+    ProfileAPI.putUserStatus(status);
+}
+
+export const initUserProfileWithDataInMemory = (profile, status) => (dispatch) => {
+    dispatch(toggleIsGettingProfileData(true));
+    dispatch(setUserStatus(status));
+    dispatch(setUserProfile(profile));
+    dispatch(toggleIsGettingProfileData(false));
+}
+
+export const initUserProfileWithoutDataInMemory = (userId) => async (dispatch) => {
+    dispatch(toggleIsGettingProfileData(true));
+    await Promise.all([dispatch(getUserProfileData(userId)), dispatch(getUserStatus(userId))]);
+    dispatch(toggleIsGettingProfileData(false));
 }
 
 export default profileReducer;

@@ -15,26 +15,6 @@
       border-radius: 5px 5px 0 0;
     }
   }
-  //&__add-photo{
-  //  position: absolute;
-  //  bottom: 10px;
-  //  right: 10px;
-  //  //width: 35px;
-  //  //height: 35px;
-  //  //border-radius: 50%;
-  //  //background-color: whitesmoke;
-  //  cursor: pointer;
-  //
-  //  i{
-  //    color: whitesmoke;
-  //    font-size: 17px;
-  //    text-shadow: 1px 1px 1px $mainTextColor;
-  //    line-height: 34px;
-  //    &:hover{
-  //      text-shadow: 1px 1px 1px $titleTextColor;
-  //    }
-  //  }
-  //}
   &__menu{
     position: relative;
     width: 100%;
@@ -78,10 +58,5 @@
     font-weight: 700;
     color: $titleTextColor;
 
-  }
-  &__country{
-    font-weight: 400;
-    font-size: 15px;
-    color: $mainTextColor;
   }
 }

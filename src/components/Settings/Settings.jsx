@@ -1,6 +1,7 @@
 import './Settings.scss'
 import {NavLink, Route} from "react-router-dom";
 import ProfileSettings from "./ProfileSettings/ProfileSettings";
+import {refreshAuthUserProfileData} from "../../reducers/auth";
 
 const Settings = (props) => {
     return(
@@ -16,8 +17,10 @@ const Settings = (props) => {
                     <Route path='/settings/profile' render={() =>
                         <ProfileSettings
                             photo={props.photo}
+                            profile={props.profile}
                             authUserId={props.authUserId}
                             putNewUserPhotoAndRefreshProfileState={props.putNewUserPhotoAndRefreshProfileState}
+                            refreshAuthUserProfileData={props.refreshAuthUserProfileData}
                         />}
                     />
                 </div>

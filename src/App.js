@@ -1,6 +1,8 @@
 import {BrowserRouter, Redirect, Route} from "react-router-dom";
 import './App.scss';
 import React, {useEffect} from 'react';
+import store from "./redux/reduxStore";
+import {connect, Provider} from "react-redux";
 import Nav from "./components/Nav/Nav";
 import Dialogs from "./components/Dialogs/Dialogs";
 import News from "./components/News/News";
@@ -10,12 +12,13 @@ import FindFriendsContainer from "./containers/FindFriendsContainer";
 import ProfileContainer from "./containers/ProfileContainer";
 import HeaderContainer from "./containers/HeaderContainer";
 import SettingsContainer from "./containers/SettingsContainer";
-import LoginContainer from "./containers/LoginContainer";
+import Preloader from "./components/SharedComponents/Preloader/Preloader";
 import {compose} from "redux";
-import {connect} from "react-redux";
 import {getAuthUserDataAndGetSetAuthUserProfileData} from "./reducers/auth";
 import {toggleInitialized} from "./reducers/app";
-import Preloader from "./components/SharedComponents/Preloader/Preloader";
+import {withSuspense} from "./hoc/withSuspense";
+
+const LoginContainer = React.lazy(() => import("./containers/LoginContainer"));
 
 const App = (props) => {
     useEffect(() => {
@@ -37,7 +40,6 @@ const App = (props) => {
     let profileContainerComponent = () => <ProfileContainer />;
     let findFriendsContainerComponent = () => <FindFriendsContainer />;
     let settingsContainerComponent = () => <SettingsContainer />;
-    let loginContainerComponent = () => <LoginContainer />;
 
     return (
       <BrowserRouter>
@@ -50,8 +52,8 @@ const App = (props) => {
                 <Route path='/news' component={News}/>
                 <Route path='/music' component={Music}/>
                 <Route path='/settings' render={settingsContainerComponent}/>
-                <Route path='/users/:page?' render={findFriendsContainerComponent} />
-                <Route path='/login' render={loginContainerComponent} />
+                <Route path='/users' render={findFriendsContainerComponent} />
+                <Route path='/login' render={withSuspense(LoginContainer)} />
                 <Route exact path='/'>
                     <Redirect to='/profile' />
                 </Route>
@@ -66,6 +68,18 @@ const mapStateToProps = (state) => ({
     state: state,
 });
 
-export default compose(
+let AppContainer = compose(
     connect(mapStateToProps,{ getAuthUserDataAndGetSetAuthUserProfileData, toggleInitialized }),
 )(App);
+
+const SocialNetworkApp = () => {
+    return(
+        <React.StrictMode>
+            <Provider store={store}>
+                <AppContainer />
+            </Provider>
+        </React.StrictMode>
+    )
+}
+
+export default SocialNetworkApp;

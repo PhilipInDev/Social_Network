@@ -1,0 +1,32 @@
+@import "../../sharedStyles";
+
+.input-text{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  &__label{
+    display: inline;
+    color: $titleTextColor;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  &__input{
+    @include inputReset;
+    color: $mainTextColor;
+    font-size: 15px;
+    padding: 5px 10px 5px 10px;
+    margin-bottom: 5px;
+    border: 1px solid $smoothCommonOrange;
+    border-radius: 5px;
+    box-sizing: border-box;
+    &:focus{
+      outline: 1px solid $commonOrange;
+    }
+  }
+  &__error{
+    height: 10px;
+    font-size: 13px;
+    color: $validationErrorColor;
+  }
+}

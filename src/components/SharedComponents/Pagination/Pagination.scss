@@ -31,12 +31,22 @@
   }
   &__number-box{
     border-radius: 5px;
-    flex: 0 0 30px;
+    flex: 0 0 35px;
+    width: 35px;
     box-sizing: border-box;
     border: 1px solid $mainTextColor;
     color: $mainTextColor;
+    cursor: pointer;
     @include flexCenter;
     @include linkReset;
+    &:hover{
+      border: 1px solid $commonOrange;
+      color: $commonOrange;
+    }
+    &--large{
+      flex: 0 0 45px;
+      width: 45px;
+    }
   }
 
   &__number{

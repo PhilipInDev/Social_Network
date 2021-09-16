@@ -27,9 +27,6 @@ const LoginForm = (props) => {
         loginEmailInput: Yup.string().email('Invalid email address').required('Required'),
         loginPwdInput: Yup.string().required('Required')
     });
-
-    //place of troubling
-    //why login pathname goes when authorization in action
     if(props.isAuth){
         return <Redirect to={'/profile'}/>;
     }

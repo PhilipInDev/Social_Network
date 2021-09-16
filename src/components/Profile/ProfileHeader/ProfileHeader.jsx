@@ -2,6 +2,9 @@ import './ProfileHeader.scss';
 import NetworkContact from "../../SharedComponents/NetworkContact/NetworkContact";
 import defBgImg from '../../../assets/images/currDefProfileBg.png'
 import defAvaImg from '../../../assets/images/defaultAvatar.png';
+import React from 'react';
+import ProfileStatus from "./ProfileStatus/ProfileStatus";
+
 
 const ProfileHeader = (props) => {
     let contactItems = [];
@@ -15,9 +18,6 @@ const ProfileHeader = (props) => {
         <div className='profileHeader'>
            <div className='profileHeader__background'>
                <img alt='Background' src={backgroundImg} />
-               {/*<div className="profileHeader__add-photo">*/}
-               {/*    <i className="far fa-edit"></i>*/}
-               {/*</div>*/}
            </div>
             <div className='profileHeader__menu'>
                 <div className="profileHeader__contacts">
@@ -29,7 +29,11 @@ const ProfileHeader = (props) => {
                     <img src={avatarImg} alt='avatar'/>
                 </a>
                 <a href='#'><p className='profile-short__name'>{props.name}</p></a>
-                <p className='profile-short__country'>{props.country}</p>
+                <ProfileStatus
+                    statusEditable={props.statusEditable}
+                    userStatus={props.userStatus}
+                    putUserStatus={props.putUserStatus}
+                />
             </div>
         </div>
     )

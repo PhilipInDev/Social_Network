@@ -1,11 +1,11 @@
 import './Button.scss'
 
-const Button = (props) => {
+const Button = ({type, inner, disabled, isFetching}) => {
     return(
         <button
-            className={props.disabled ? 'commonButton commonButton--disabled' :  'commonButton'}
-            type={props.type ? props.type : 'button'}
-        >{props.inner}</button>
+            className={disabled ? 'commonButton commonButton--disabled' :  'commonButton'}
+            type={type ? type : 'button'}
+        >{isFetching ? 'Sending...' : inner}</button>
     )
 }
 

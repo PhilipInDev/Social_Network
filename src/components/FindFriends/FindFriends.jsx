@@ -3,7 +3,7 @@ import UserItem from "./UserItem/UserItem";
 import SearchFilters from "./SearchFilters/SearchFilters";
 import ShowMoreBtn from "./ShowMoreBtn/ShowMoreBtn";
 import React from 'react';
-import Pagination from "./Pagination/Pagination";
+import Pagination from "../SharedComponents/Pagination/Pagination";
 
 class FindFriends extends React.Component{
     mapUserItems = () => {
@@ -20,12 +20,13 @@ class FindFriends extends React.Component{
             />)
     }
 
-    showMoreUsersOnClick = () => {
-        this.props.getAdditionalUsers(this.props.usersCount,this.props.currentPage + 1, this.props.users)
+    showMoreUsersOnClick = async () => {
+        let yOffset = window.pageYOffset;
+        await this.props.getAdditionalUsers(this.props.usersCount, +this.props.currentPage + 1, this.props.users);
+        window.scrollTo( 0, yOffset );
     }
 
     render() {
-        let pagesCount = Math.ceil(this.props.totalCount / this.props.usersCount);
         return(
             <div className='find-friends'>
                 <div className="find-friends__search-box">
@@ -36,18 +37,25 @@ class FindFriends extends React.Component{
                 <div className={this.props.isFetching ? "find-friends__user-list find-friends__user-list--is-fetching" : "find-friends__user-list"}>
                     {this.mapUserItems()}
                     <div className="find-friends__show-more-wrapper">
-                        <div className="find-friends__show-more-box" onClick={this.showMoreUsersOnClick}>
-                            <ShowMoreBtn />
-                        </div>
+                        {
+                            this.props.currentPage < Math.ceil(this.props.totalCount / this.props.usersCount)
+                                ?
+                                <div className="find-friends__show-more-box" onClick={this.showMoreUsersOnClick}>
+                                    <ShowMoreBtn />
+                                </div>
+                                :
+                                null
+                        }
                     </div>
                 </div>
                 <div className="find-friends__pagination-box" >
                     <Pagination
                         changeCurrentPage = {this.props.setCurrentPage}
-                        currentPage={this.props.currentPage}
-                        pagesCount={pagesCount}
-                        usersCount={this.props.usersCount}
-                        getUsers={this.props.getUsers}
+                        currentPage={+this.props.currentPage}
+                        itemsCount={this.props.usersCount}
+                        totalCount={this.props.totalCount}
+                        getItems={this.props.getUsers}
+                        numOfLinks={5}
                     />
                 </div>
             </div>

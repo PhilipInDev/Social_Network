@@ -1,68 +1,53 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Profile from "../components/Profile/Profile";
 import {connect} from "react-redux";
-import {getUserProfileData, setUserProfile} from "../reducers/profile";
+import {
+    initUserProfileWithDataInMemory,
+    initUserProfileWithoutDataInMemory,
+    putUserStatus
+} from "../reducers/profile";
 import {withRouter} from "react-router-dom";
-import {AuthAPI} from "../api/api";
 import {withAuthRedirect} from "../hoc/withAuthRedirect";
 import {compose} from "redux";
 
-class ProfileContainer extends React.Component{
-    componentDidMount() {
-        let userId = this.props.match.params.userId
-        if(!userId){
-            if(!this.props.authUserProfile?.userId && !this.props.isAuthorizing && !this.props.isAuth){
-                AuthAPI.getAuthUserData()
-                    .then((data) =>{
-                        if(!data.resultCode){
-                            if(!userId) userId = data.data.id ? data.data.id : 2;
-                            this.props.getUserProfileData(userId)
-                        }
-                    })
-            }
-            if(this.props.authUserProfile){
-                this.props.setUserProfile(this.props.authUserProfile)
-            }
-        }
-        if(userId){
-            this.props.getUserProfileData(userId);
-        }
-    }
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if(prevProps.profile !== this.props.authUserProfile && !this.props.match.params.userId){
-            if(this.props.authUserProfile){
-                this.props.setUserProfile(this.props.authUserProfile)
-            }
-            if(!this.props.authUserProfile && !this.props.isAuthorizing && !this.props.isAuth){
-                if(!this.props.profile){
-                    AuthAPI.getAuthUserData()
-                        .then((data) =>{
-                            if(!data.resultCode){
-                                this.props.getUserProfileData(data.data.id)
-                            }
-                        })
+export const ProfileContainer = (props) => {
+    useEffect(() => {
+        window.scrollTo( 0, 0 );
+        let userId = +props.match.params.userId;
+        if(userId !== props.profile?.userId || !userId){
+            if(!userId && JSON.stringify(props.authUserProfile) !== JSON.stringify(props.profile)){
+                if(props.authUserProfile && !props.isGettingProfileData){
+                    props.initUserProfileWithDataInMemory(props.authUserProfile, props.authUserStatus);
                 }
             }
+            if(userId){
+                props.initUserProfileWithoutDataInMemory(userId);
+            }
         }
-    }
+    }, [props.match.params.userId, props.authUserProfile])
 
-    render(){
-        return(
-            <Profile {...this.props}/>
-        )
-    }
+    return(
+            <Profile {...props}/>
+    )
 }
 
 const mapStateToProps = (state) => ({
     profile: state.profile.userProfile,
+    userStatus: state.profile.userStatus,
     authUserProfile: state.auth.authorizedUserProfile,
+    authUserStatus: state.auth.authUserStatus,
     authUserId: state.auth.authorizedUserProfile?.userId,
-    isAuth: state.auth.isAuth
+    isAuth: state.auth.isAuth,
+    isGettingProfileData: state.profile.isGettingProfileData
 })
 
 
 export default compose(
-    connect(mapStateToProps,{ getUserProfileData, setUserProfile }),
+    connect(mapStateToProps,{
+        initUserProfileWithDataInMemory,
+        initUserProfileWithoutDataInMemory,
+        putUserStatus
+    }),
     withRouter,
     withAuthRedirect
 )(ProfileContainer);

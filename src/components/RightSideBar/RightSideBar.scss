@@ -1,5 +1,14 @@
 @import "../sharedStyles";
 
+@keyframes rightSideBarIntroAnim {
+  from{
+    transform: translateX(60px);
+  }
+  to{
+    transform: translateX(0px);
+  }
+}
+
 .right-side-bar{
   box-sizing: border-box;
   padding-top: 20px;
@@ -8,6 +17,7 @@
   padding-bottom: 60px;
   position: fixed;
   right: 0;
+  animation: rightSideBarIntroAnim .8s;
   top: 60px;
   z-index: 50;
   background-color: $mainComponentsColor;

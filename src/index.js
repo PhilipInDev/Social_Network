@@ -2,19 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'normalize.css';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from "./redux/reduxStore";
-import {Provider} from "react-redux";
+import SocialNetworkApp from "./App";
 
 export const rerenderEntireTree = (store) =>{
-    ReactDOM.render(
-        <React.StrictMode>
-            <Provider store={store}>
-                <App store={store}/>
-            </Provider>
-        </React.StrictMode>,
-        document.getElementById('root')
+    ReactDOM.render(<SocialNetworkApp />, document.getElementById('root')
     );
 }
 rerenderEntireTree(store);

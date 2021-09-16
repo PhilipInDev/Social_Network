@@ -4,7 +4,6 @@ import Button from "../../SharedComponents/Button";
 import React from "react";
 
 const ProfilePosts = (props) => {
-
     let fulledPosts = props.posts.map(el=>(
             <Post profileLink={el.profileLink}
               name={el.name}

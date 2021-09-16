@@ -42,7 +42,7 @@
   a{
     @include linkReset;
     width: 100%;
-    &:hover{
+    &:hover, &.active{
       transition: .1s;
       color: $commonOrange;
       li{
