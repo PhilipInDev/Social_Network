@@ -1,5 +1,6 @@
 import {Redirect} from "react-router-dom";
 import {connect} from "react-redux";
+import {removeGlobalMessage} from "../reducers/app";
 
 let mapStateToPropsForRedirect = (state) => ({
     isAuth: state.auth.isAuth,
@@ -12,5 +13,5 @@ export const withAuthRedirect = (Component) => {
         return <Component {...props}/>
     }
 
-    return connect(mapStateToPropsForRedirect)(RedirectComponent);
+    return connect(mapStateToPropsForRedirect, { removeGlobalMessage })(RedirectComponent);
 }

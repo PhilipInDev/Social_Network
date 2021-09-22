@@ -9,13 +9,14 @@ import {
 import {withRouter} from "react-router-dom";
 import {withAuthRedirect} from "../hoc/withAuthRedirect";
 import {compose} from "redux";
+import {withGlobalMessage} from "../hoc/withGlobalMessage";
 
 export const ProfileContainer = (props) => {
     useEffect(() => {
         window.scrollTo( 0, 0 );
         let userId = +props.match.params.userId;
         if(userId !== props.profile?.userId || !userId){
-            if(!userId && JSON.stringify(props.authUserProfile) !== JSON.stringify(props.profile)){
+            if(JSON.stringify(props.authUserProfile) !== JSON.stringify(props.profile) || props.authUserStatus !== props.userStatus){
                 if(props.authUserProfile && !props.isGettingProfileData){
                     props.initUserProfileWithDataInMemory(props.authUserProfile, props.authUserStatus);
                 }
@@ -49,5 +50,6 @@ export default compose(
         putUserStatus
     }),
     withRouter,
-    withAuthRedirect
+    withAuthRedirect,
+    withGlobalMessage
 )(ProfileContainer);

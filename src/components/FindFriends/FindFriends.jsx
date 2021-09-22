@@ -4,13 +4,15 @@ import SearchFilters from "./SearchFilters/SearchFilters";
 import ShowMoreBtn from "./ShowMoreBtn/ShowMoreBtn";
 import React from 'react';
 import Pagination from "../SharedComponents/Pagination/Pagination";
+import SearchInput from "./SearchInput/SearchInput";
+import {nanoid} from "nanoid";
 
 class FindFriends extends React.Component{
     mapUserItems = () => {
-       return this.props.users.map(item =>
-            <UserItem photos={item.photos}
+       return this.props.users.map((item) =>
+            <UserItem key={nanoid()}
+                      photos={item.photos}
                       name={item.name}
-                // location={item.location}
                       status={item.status}
                       isFriend={item.followed}
                       id={item.id}
@@ -22,16 +24,14 @@ class FindFriends extends React.Component{
 
     showMoreUsersOnClick = async () => {
         let yOffset = window.pageYOffset;
-        await this.props.getAdditionalUsers(this.props.usersCount, +this.props.currentPage + 1, this.props.users);
+        await this.props.getAdditionalUsers(this.props.usersCount, +this.props.currentPage + 1, this.props.users, this.props.searchCondition);
         window.scrollTo( 0, yOffset );
     }
-
     render() {
         return(
             <div className='find-friends'>
                 <div className="find-friends__search-box">
-                    <input type="text" className="find-friends__search-input" placeholder='Search...'/>
-                    <i className="fas fa-search " />
+                    <SearchInput getUsers={this.props.getUsers} setSearchCondition={this.props.setSearchCondition}/>
                 </div>
                 <SearchFilters />
                 <div className={this.props.isFetching ? "find-friends__user-list find-friends__user-list--is-fetching" : "find-friends__user-list"}>
@@ -56,6 +56,7 @@ class FindFriends extends React.Component{
                         totalCount={this.props.totalCount}
                         getItems={this.props.getUsers}
                         numOfLinks={5}
+                        searchCondition={this.props.searchCondition}
                     />
                 </div>
             </div>

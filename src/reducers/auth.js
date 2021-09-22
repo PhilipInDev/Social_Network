@@ -1,4 +1,5 @@
-import {AuthAPI, ProfileAPI} from "../api/api";
+import {AuthAPI, ProfileAPI, SecurityAPI} from "../api/api";
+import {setGlobalMessage} from "./app";
 
 export const SET_ME = 'SET_USER_DATA';
 export const SET_AUTH_USER_PROFILE = 'SET_AUTH_USER_PROFILE';
@@ -6,11 +7,13 @@ export const TOGGLE_AUTH = 'TOGGLE_AUTH';
 export const TOGGLE_IS_AUTH_DATA_INCORRECT = 'TOGGLE_IS_AUTH_DATA_INCORRECT';
 export const TOGGLE_IS_AUTHORIZING = 'TOGGLE_IS_AUTHORIZING';
 export const SET_AUTH_USER_STATUS = 'SET_AUTH_USER_STATUS';
+export const SET_CAPTCHA_URL = 'SET_CAPTCHA_URL';
 
 const initialState = {
     id: null,
     email: null,
     login: null,
+    captchaURL: null,
     isAuth: false,
     isAuthorizing: false,
     isAuthDataIncorrect: false,
@@ -50,6 +53,11 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 authUserStatus: action.authUserStatus
             }
+        case SET_CAPTCHA_URL:
+            return {
+                ...state,
+                captchaURL: action.captchaURL
+            }
         default:
             return state;
     }
@@ -57,15 +65,15 @@ const authReducer = (state = initialState, action) => {
 
 export const setMe = (data) => ({
     type: SET_ME,
-    data: data
+    data
 })
 export const setAuthUserProfile = (profile) => ({
     type: SET_AUTH_USER_PROFILE,
-    profile: profile
+    profile
 })
 export const toggleAuth = (isAuth) => ({
     type: TOGGLE_AUTH,
-    isAuth: isAuth
+    isAuth
 })
 
 export const toggleIsAuthDataIncorrect = (isIncorrect) => ({
@@ -75,14 +83,17 @@ export const toggleIsAuthDataIncorrect = (isIncorrect) => ({
 
 export const toggleIsAuthorizing = (isAuthorizing) => ({
     type: TOGGLE_IS_AUTHORIZING,
-    isAuthorizing: isAuthorizing
+    isAuthorizing
 })
 
 export const setAuthUserStatus = (authUserStatus) => ({
     type: SET_AUTH_USER_STATUS,
-    authUserStatus: authUserStatus
+    authUserStatus
 })
-
+export const setCaptchaURL = (captchaURL) =>({
+    type: SET_CAPTCHA_URL,
+    captchaURL
+})
 export const putNewUserPhotoAndRefreshProfileState = (formData, authUserId) => (dispatch) =>{
     ProfileAPI.putUsersPhoto(formData)
         .then((response)=>{
@@ -122,15 +133,20 @@ export const getAuthUserData = () => (dispatch) => {
         })
 }
 
-export const authorize = (email, password, rememberMe) => (dispatch) => {
-    return AuthAPI.authorize(email, password, rememberMe)
+export const authorize = (email, password, rememberMe, captcha) => (dispatch) => {
+    return AuthAPI.authorize(email, password, rememberMe, captcha)
         .then((data) => {
             if(!data.resultCode){
                 dispatch(toggleIsAuthDataIncorrect(false));
-                dispatch(getAuthUserDataAndGetSetAuthUserProfileData())
+                dispatch(getAuthUserDataAndGetSetAuthUserProfileData());
+                return Promise.resolve(data.messages);
             }
             if(data.resultCode){
+                if(data.resultCode === 10){
+                    dispatch(getCaptchaURL())
+                }
                 dispatch(toggleIsAuthDataIncorrect(true))
+                return Promise.reject(data.messages);
             }
         })
 }
@@ -146,12 +162,27 @@ export const unAuthorize = () => (dispatch) => {
         })
 }
 export const refreshAuthUserProfileData = (profileData) => async (dispatch) => {
-    const dataResult = await ProfileAPI.putUserProfile(profileData)
-    if(!dataResult.resultCode){
-        const authUserData = await AuthAPI.getAuthUserData();
-        const authUserProfileData = await ProfileAPI.getUserProfileData(authUserData.data.id);
-        dispatch(setAuthUserProfile(authUserProfileData));
+    try {
+        const dataResult = await ProfileAPI.putUserProfile(profileData)
+        if (!dataResult.resultCode) {
+            const authUserData = await AuthAPI.getAuthUserData();
+            const authUserProfileData = await ProfileAPI.getUserProfileData(authUserData.data.id);
+            dispatch(setAuthUserProfile(authUserProfileData));
+            dispatch(setGlobalMessage('Profile update is successful', true));
+        }
+    } catch (error) {
+        dispatch(setGlobalMessage(error, false));
     }
+}
+
+export const getCaptchaURL = () => async (dispatch) => {
+    try {
+        const response = await SecurityAPI.getCaptcha();
+        if(response.resultCode === 0) dispatch(setCaptchaURL(response.url))
+    }catch (error){
+        dispatch(setGlobalMessage(error, false))
+    }
+
 }
 
 export default authReducer;

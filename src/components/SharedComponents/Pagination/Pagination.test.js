@@ -1,4 +1,4 @@
-import {render, waitFor, screen, getByText} from "@testing-library/react";
+import {render, waitFor} from "@testing-library/react";
 import Pagination from "./Pagination";
 import {BrowserRouter} from "react-router-dom";
 import userEvent from '@testing-library/user-event';

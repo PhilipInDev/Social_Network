@@ -1,5 +1,15 @@
 @import "../../sharedStyles";
 
+@keyframes optionsMenuOnAndOff {
+  from{
+    width: 0;
+    font-size: 0;
+  }
+  to{
+    width: 120px;
+    font-size: 16px;
+  }
+}
 
 .user-not-auth{
   display: flex;
@@ -86,6 +96,7 @@
     position: absolute;
     bottom: -25px * $loginItemLiCount - 8px;
     right: 70px;
+    animation: optionsMenuOnAndOff .3s;
     ul{
       list-style: none;
       padding: 0;

@@ -1,10 +1,11 @@
 import './InputText.scss';
 
-const InputText = ({id, label='', value='', placeholder='', onChange, height='', width='', maxLength='', minLength='', error=''}) => {
+const InputText = ({id, name='', label='', value='', placeholder='', onChange, height='', width='', maxLength='', minLength='', error=''}) => {
     return (
         <div className={'input-text'}>
             <label htmlFor={id} className={'input-text__label'}>{label}</label>
             <input id={id}
+                   name={name}
                    onChange={onChange}
                    className={'input-text__input'}
                    type={'text'}

@@ -1,8 +1,11 @@
 
 export const TOGGLE_INITIALIZED = 'TOGGLE_INITIALIZED';
+export const SET_GLOBAL_MESSAGE = 'SET_GLOBAL_MESSAGE';
+export const REMOVE_GLOBAL_MESSAGE = 'REMOVE_GLOBAL_MESSAGE';
 
 const initialState = {
-    initialized: false
+    initialized: false,
+    globalMessage: []
 }
 
 const appReducer = (state = initialState, action) => {
@@ -12,6 +15,16 @@ const appReducer = (state = initialState, action) => {
                 ...state,
                 initialized: action.initialized
             }
+        case SET_GLOBAL_MESSAGE:
+            return {
+                ...state,
+                globalMessage: [...state.globalMessage, {message: action.message,isSuccess: action.isSuccess}]
+            }
+        case REMOVE_GLOBAL_MESSAGE:
+            return{
+                ...state,
+                globalMessage: []
+            }
         default:
             return state;
     }
@@ -20,6 +33,16 @@ const appReducer = (state = initialState, action) => {
 export const toggleInitialized = (isInitialized) => ({
     type: TOGGLE_INITIALIZED,
     initialized: isInitialized
+})
+
+export const setGlobalMessage = (message, isSuccess) => ({
+    type: SET_GLOBAL_MESSAGE,
+    message,
+    isSuccess
+})
+
+export const removeGlobalMessage = () => ({
+    type: REMOVE_GLOBAL_MESSAGE
 })
 
 

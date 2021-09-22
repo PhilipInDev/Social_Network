@@ -3,7 +3,7 @@ import axios from "axios";
 const instanceAxios = axios.create({
     withCredentials: true,
     headers: {
-        'API-KEY': '6f32a2b4-d8b8-4517-bfb3-660238968bfb'
+        'API-KEY': '766a1cb3-b0eb-40b3-b01e-c5a8e95314af'
     },
     baseURL: 'https://social-network.samuraijs.com/api/1.0/'
 })
@@ -11,25 +11,29 @@ const instanceAxios = axios.create({
 const requestCommonThen = (request) => {
     return request()
         .then((response) => response.data)
+        .catch(error => Promise.reject(error.message))
 }
 
 export const UsersAPI = {
-    getUsers(usersCount = 10, page = 1) {
-        return instanceAxios
-            .get(`users?count=${usersCount}&page=${page}`)
-            .then((response) => response.data)
+    getUsers(usersCount = 10, page = 1, term = '', friend = 0) {
+        const nameToSearch =  term ? `&term=${term}` : '';
+        const isOnlyFriends = friend === 0 ? '' : `&friend=${friend}`;
+        return requestCommonThen(() =>
+            instanceAxios
+                .get(`users?count=${usersCount}&page=${page}${nameToSearch}${isOnlyFriends}`)
+        )
     },
 }
 
 export const ProfileAPI = {
     getUserProfileData(id) {
         return instanceAxios
-            .get(`/profile/${id}`)
+            .get(`profile/${id}`)
             .then((response) => response.data)
     },
     putUsersPhoto(formData) {
         return instanceAxios
-            .put('/profile/photo', formData, {
+            .put('profile/photo', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -39,13 +43,13 @@ export const ProfileAPI = {
     getUserStatus(id){
         return requestCommonThen(() =>
             instanceAxios
-                .get(`/profile/status/${id}`)
+                .get(`profile/status/${id}`)
         )
     },
     putUserStatus(status){
-        return requestCommonThen( () =>
+        return requestCommonThen(() =>
             instanceAxios
-                .put('/profile/status', status)
+                .put('profile/status', status)
         )
     },
     putUserProfile(profileData){
@@ -74,13 +78,13 @@ export const AuthAPI = {
             .get('auth/me')
             .then((response) => response.data)
     },
-    authorize(email, password, rememberMe){
+    authorize(email, password, rememberMe, captcha=''){
         return instanceAxios
             .post('auth/login', {
                 email: email,
                 password: password,
                 rememberMe: rememberMe,
-                captcha: true
+                captcha: captcha
             })
             .then((response) => response.data)
     },
@@ -88,5 +92,13 @@ export const AuthAPI = {
         return instanceAxios
             .delete('auth/login')
             .then((response) => response.data)
+    }
+}
+export const SecurityAPI = {
+    getCaptcha(){
+        return requestCommonThen(() =>
+            instanceAxios
+                .get('security/get-captcha-url')
+        )
     }
 }

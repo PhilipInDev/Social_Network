@@ -1,11 +1,12 @@
 import {ProfileAPI} from "../api/api";
+import {setGlobalMessage} from "./app";
 
-export const SET_USER_PROFILE = 'SET_USER_PROFILE';
-export const TOGGLE_IS_GETTING_PROFILE_DATA = 'TOGGLE_IS_GETTING_PROFILE_DATA';
+const SET_USER_PROFILE = 'profile/SET_USER_PROFILE';
+const TOGGLE_IS_GETTING_PROFILE_DATA = 'profile/TOGGLE_IS_GETTING_PROFILE_DATA';
 //-- posts
-export const ADD_POST = 'ADD_POST';
-export const UPDATE_NEW_POST_TEXT = 'UPDATE_NEW_POST_TEXT';
-export const SET_USER_STATUS = 'SET_USER_STATUS';
+const ADD_POST = 'profile/ADD_POST';
+const UPDATE_NEW_POST_TEXT = 'profile/UPDATE_NEW_POST_TEXT';
+const SET_USER_STATUS = 'profile/SET_USER_STATUS';
 
 const initialState = {
     title: 'Profile',
@@ -114,13 +115,25 @@ export const setUserStatus = (status) => ({
 })
 
 export const getUserStatus = (id) => async (dispatch) => {
-    const data = await ProfileAPI.getUserStatus(id);
-    dispatch(setUserStatus(data));
+    try{
+        const data = await ProfileAPI.getUserStatus(id);
+        dispatch(setUserStatus(data));
+    }catch(error) {
+        dispatch(setGlobalMessage(error, false))
+    }
+
 }
 
-export const putUserStatus = (status) => (dispatch) => {
-    dispatch(setUserStatus(status.status));
-    ProfileAPI.putUserStatus(status);
+export const putUserStatus = (status) => async (dispatch) => {
+    try{
+        let response = await ProfileAPI.putUserStatus(status);
+        if(response.resultCode === 0){
+            dispatch(setUserStatus(status.status));
+        }
+    }catch(error) {
+        dispatch(setGlobalMessage(error, false))
+    }
+
 }
 
 export const initUserProfileWithDataInMemory = (profile, status) => (dispatch) => {

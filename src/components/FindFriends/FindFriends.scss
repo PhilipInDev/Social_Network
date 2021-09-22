@@ -6,27 +6,10 @@
   grid-template-rows: 50px 1fr 50px;
   grid-row-gap: 20px;
   grid-column-gap: 30px;
-
   &__search-box{
-    @include mainPageComponentsStyles;
-    width: 100%;
-    height: 50px;
-    display: flex;
-    align-items: center;
     grid-column: 1/3;
     grid-row: 1;
-    box-sizing: border-box;
-  }
-
-  &__search-input{
-    height: 100%;
-    flex: 0 1 95%;
-    padding: 5px 20px;
-    box-sizing: border-box;
-    @include inputReset;
-  }
-  i{
-    cursor: pointer;
+    @include mainPageComponentsStyles;
   }
   &__user-list{
     @include mainPageComponentsStyles;

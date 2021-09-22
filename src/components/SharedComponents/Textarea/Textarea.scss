@@ -15,15 +15,16 @@
   }
   &__textarea{
     resize: vertical;
-    color: $mainTextColor;
+    color: $mainTextColorPlus;
     font-size: 15px;
     padding: 5px 10px 5px 10px;
     margin-bottom: 4px;
-    border: 1px solid $smoothCommonOrange;
+    border: 1px solid $middleCommonOrange;
     border-radius: 5px;
     box-sizing: border-box;
     &:focus{
-      outline: 1px solid $commonOrange;
+      border: 1px solid $commonOrange;
+      outline: 2px solid $middleCommonOrange;
     }
   }
   &__error{

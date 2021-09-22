@@ -4,7 +4,7 @@ import {
     deleteFriend,
     getAdditionalUsers,
     getUsers, postAddFriend,
-    setCurrentPage,
+    setCurrentPage, setSearchCondition,
     setTotalCount,
     setUsers,
     setUsersCount, toggleAddingFriend,
@@ -15,7 +15,7 @@ import FindFriends from "../components/FindFriends/FindFriends";
 import {withRouter} from "react-router-dom";
 import {withAuthRedirect} from "../hoc/withAuthRedirect";
 import {compose} from "redux";
-import {UsersAPI} from "../api/api";
+import {withGlobalMessage} from "../hoc/withGlobalMessage";
 
 
 class FindFriendsContainer extends React.Component{
@@ -60,7 +60,8 @@ const mapStateToProps = (state) => {
         totalCount: state.findFriends.totalCount,
         isFetching: state.findFriends.isFetching,
         isAddingFriend: state.findFriends.isAddingFriend,
-        whichFriendIsAdding: state.findFriends.whichFriendIsAdding
+        whichFriendIsAdding: state.findFriends.whichFriendIsAdding,
+        searchCondition: state.findFriends.searchCondition
     }
 }
 
@@ -125,8 +126,10 @@ export default compose(
             getUsers,
             getAdditionalUsers,
             postAddFriend,
-            deleteFriend
+            deleteFriend,
+            setSearchCondition
         }),
     withRouter,
-    withAuthRedirect
+    withAuthRedirect,
+    withGlobalMessage
 )(FindFriendsContainer);

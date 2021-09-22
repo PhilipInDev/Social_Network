@@ -1,20 +1,23 @@
 import {FollowAPI, UsersAPI} from "../api/api";
+import {setGlobalMessage} from "./app";
 
 export const SET_USERS = 'SET_USERS';
 export const TOGGLE_FRIEND = 'TOGGLE_FRIEND';
 export const TOGGLE_IS_FETCHING = 'TOGGLE_IS_FETCHING';
 export const TOGGLE_IS_ADDING_FRIEND = 'TOGGLE_IS_ADDING_FRIEND';
 export const TOGGLE_WHICH_FRIEND_IS_ADDING = 'TOGGLE_WHICH_FRIEND_IS_ADDING';
+export const SET_SEARCH_CONDITION = 'findFriends/SET_SEARCH_CONDITION';
 // -- pagination
 export const SET_USERS_COUNT = 'SET_USERS_COUNT';
 export const SET_TOTAL_COUNT = 'SET_TOTAL_COUNT';
-export const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE';
+export const SET_CURRENT_PAGE = 'findFriends/SET_CURRENT_PAGE';
 
 const initialState = {
     users: [],
     totalCount: 0,
     usersCount: 10,
     currentPage: 1,
+    searchCondition: '',
     isFetching: false,
     isAddingFriend: false,
     whichFriendIsAdding: []
@@ -63,11 +66,20 @@ const findFriendsReducer = (state = initialState, action) => {
                 ...state,
                 whichFriendIsAdding: state.isAddingFriend ? [action.id] : state.whichFriendIsAdding.filter((id) => id !== action.id)
             }
+        case SET_SEARCH_CONDITION:
+            return {
+                ...state,
+                ...action.payload
+            }
         default:
             return state;
     }
 }
 
+export const setSearchCondition = (searchCondition) => ({
+    type: SET_SEARCH_CONDITION,
+    payload: {searchCondition}
+})
 export const toggleFriend = (id, isFriend) => ({
     type: TOGGLE_FRIEND,
     id: id,
@@ -102,18 +114,23 @@ export const toggleWhichFriendIsAdding = (userId) => ({
     id: userId
 })
 
-export const getUsers = (usersCount, pageNum) => async (dispatch) => {
-    dispatch(setCurrentPage(pageNum));
-    dispatch(toggleIsFetching(true));
-    const data = await UsersAPI.getUsers(usersCount, pageNum);
-    dispatch(toggleIsFetching(false));
-    dispatch(setUsers(data.items));
-    dispatch(setTotalCount(data.totalCount));
+export const getUsers = (usersCount, pageNum, searchCondition = '', isOnlyFriends = 0) => async (dispatch) => {
+    try{
+        dispatch(setCurrentPage(pageNum));
+        dispatch(toggleIsFetching(true));
+        const data = await UsersAPI.getUsers(usersCount, pageNum, searchCondition, isOnlyFriends);
+        dispatch(toggleIsFetching(false));
+        dispatch(setUsers(data.items));
+        dispatch(setTotalCount(data.totalCount));
+    }catch (error) {
+        dispatch(setGlobalMessage(error, false))
+    }
+
 }
 
-export const getAdditionalUsers = (usersCount, pageNum, usersAddTo) => async (dispatch) => {
+export const getAdditionalUsers = (usersCount, pageNum, usersAddTo, searchCondition) => async (dispatch) => {
     dispatch(toggleIsFetching(true));
-    const data = await UsersAPI.getUsers(usersCount, pageNum);
+    const data = await UsersAPI.getUsers(usersCount, pageNum, searchCondition);
     dispatch(toggleIsFetching(false));
     dispatch(setUsers([...usersAddTo, ...data.items]));
     dispatch(setCurrentPage(pageNum));

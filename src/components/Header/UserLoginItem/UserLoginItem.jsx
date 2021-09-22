@@ -1,7 +1,7 @@
 import './UserLoginItem.scss'
 import defAvatar from '../../../assets/images/defaultAvatar.png'
 import {NavLink} from "react-router-dom";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useOutsideAlerter} from "../../SharedComponents/sharedFunc";
 
 
@@ -9,6 +9,9 @@ const UserLoginItem = (props) => {
     let [isOptionMenuOpened, toggleOptionMenu] = useState(false);
     let optionsMenuRef = useRef(null);
     useOutsideAlerter(optionsMenuRef, toggleOptionMenu);
+    useEffect(() => {
+        toggleOptionMenu(false);
+    }, [props.isAuth])
     if(!props.isAuth){
         return(
             <div className="user-not-auth">
@@ -28,7 +31,9 @@ const UserLoginItem = (props) => {
     }
     return(
         <div className="user-login-item" ref={optionsMenuRef}>
-            <img src={props.avatar ? props.avatar : defAvatar} alt="Authorized User Img" className="user-login-item__avatar"/>
+            <NavLink to={'/profile'}>
+                <img src={props.avatar ? props.avatar : defAvatar} alt="Authorized User Img" className="user-login-item__avatar"/>
+            </NavLink>
             <div className="user-login-item__info">
                 <p className="user-login-item__login">
                     {props.login}

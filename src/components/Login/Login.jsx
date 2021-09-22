@@ -4,11 +4,15 @@ import {NavLink, Redirect} from "react-router-dom";
 import React, {useState} from "react";
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import InputText from "../SharedComponents/InputText/InputText";
 
 const Login = (props) => {
     const reactToIncorrectAuthData = props.isAuthDataIncorrect ? 'login__box--shaking login__box--red' : '';
     if(props.isAuthDataIncorrect){
         setTimeout(() => {props.toggleIsAuthDataIncorrect(false)}, 1600)
+    }
+    if(props.isAuth){
+        return <Redirect to={'/profile'}/>;
     }
     return(
         <div className="login">
@@ -27,10 +31,6 @@ const LoginForm = (props) => {
         loginEmailInput: Yup.string().email('Invalid email address').required('Required'),
         loginPwdInput: Yup.string().required('Required')
     });
-    if(props.isAuth){
-        return <Redirect to={'/profile'}/>;
-    }
-
     const pwdInputRef = React.createRef();
     const togglePwdVisibilityOnClick = () => {
         if (pwdInputRef.current.type === 'password') {
@@ -49,21 +49,26 @@ const LoginForm = (props) => {
             return  <i className="fas fa-eye login-form__pwd-toggle-visibility-icon" />
         }
     }
-    const submitBtn = (isDisabled) => <Button inner="Submit" type="submit" disabled={isDisabled}/>;
+    const submitBtn = (isDisabled) => <Button inner="Submit" type="submit" disabled={isDisabled} isFetching={isDisabled} fetchingMessage={'Submiting...'}/>;
 
     return (
         <Formik
             initialValues={{
                 loginEmailInput: '',
                 loginPwdInput: '',
-                rememberMe: false
+                rememberMe: false,
+                captcha: ''
             }}
             validationSchema={loginFormValidationSchema}
             onSubmit={values => {
                 toggleIsSubmitting(true);
-                props.authorize(values.loginEmailInput, values.loginPwdInput, values.rememberMe)
+                props.authorize(values.loginEmailInput, values.loginPwdInput, values.rememberMe, values.captcha)
                     .then(() => {
                         toggleIsSubmitting(false);
+                    })
+                    .catch((message) => {
+                        toggleIsSubmitting(false);
+                        props.setGlobalMessage(message[0], false)
                     })
             }}
         >
@@ -88,6 +93,16 @@ const LoginForm = (props) => {
                         <input type="checkbox"  id="login-toggle-visibility" className="login-form__pwd-toggle-visibility"/>
                     </div>
                     <span className="login-form__validation-error">{formik.errors.loginPwdInput}</span>
+                    {
+                        props.captchaURL &&
+                            <>
+                                <img src={props.captchaURL} alt={'Captcha text'} className="login-form__captcha-img"/>
+                                <InputText id={'captcha'}
+                                           onChange={formik.handleChange}
+                                           width={'100%'}
+                                />
+                            </>
+                    }
                     <div className="login-form__controllers">
                         <input onChange={formik.handleChange} type="checkbox" id="rememberMe" className="login-form__remember-me"/>
                         <label htmlFor="rememberMe" className="login-form__remember-me-label">Remember Me</label>

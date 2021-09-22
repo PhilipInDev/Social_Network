@@ -8,11 +8,12 @@ import InputCheckbox from "../../SharedComponents/InputCheckbox/InputCheckbox";
 import Textarea from "../../SharedComponents/Textarea/Textarea";
 import * as Yup from "yup";
 import lodash from "lodash";
+import {nanoid} from "nanoid";
 
-const ProfileSettings = ({profile, authUserId, photo, putNewUserPhotoAndRefreshProfileState,refreshAuthUserProfileData}) => {
+const ProfileSettings = ({profile, authUserId, photo, putNewUserPhotoAndRefreshProfileState,refreshAuthUserProfileData, setGlobalMessage}) => {
     let [file, setFile] = useState(null);
     let [fileURL, setFileURL] = useState('')
-
+    const imgForPreview = photo ? photo : defAvatar;
     const onFileChange = (event) => {
         setFile(event.target.files[0]);
         setFileURL(URL.createObjectURL(event.target.files[0]));
@@ -27,7 +28,6 @@ const ProfileSettings = ({profile, authUserId, photo, putNewUserPhotoAndRefreshP
         );
         putNewUserPhotoAndRefreshProfileState(formData, authUserId)
     }
-    let imgForPreview = photo ? photo : defAvatar;
     return(
         <div className="profile-settings">
             <div>
@@ -40,12 +40,15 @@ const ProfileSettings = ({profile, authUserId, photo, putNewUserPhotoAndRefreshP
                     </div>
                 </div>
             </div>
-            <ProfileSettingsForm profile={profile} refreshAuthUserProfileData={refreshAuthUserProfileData}/>
+            <ProfileSettingsForm profile={profile}
+                                 refreshAuthUserProfileData={refreshAuthUserProfileData}
+                                 setGlobalMessage={setGlobalMessage}
+            />
         </div>
     )
 }
 
-const ProfileSettingsForm = ({profile, refreshAuthUserProfileData}) => {
+const ProfileSettingsForm = ({profile, refreshAuthUserProfileData, setGlobalMessage}) => {
     let [isLookingForAJob, setIsLookingForAJob] = useState(profile.lookingForAJob);
     let [isFetching, setIsFetching] = useState(false);
     let contactsValidationMapped = {};
@@ -54,24 +57,27 @@ const ProfileSettingsForm = ({profile, refreshAuthUserProfileData}) => {
         contactsValidationMapped[contactsKeys[c]] = Yup.string().nullable().url('Must be in URL format');
     }
     const profileSettingsFormValidationSchema = Yup.object({
-        fullName: Yup.string().min(2, 'Name must have more than 2 characters').max(50, '50 characters limit').required('Required').trim(),
+        fullName: Yup.string().min(2, 'Name must have more than 2 characters')
+            .max(50, '50 characters limit').required('Required').trim(),
         lookingForAJobDescription: Yup.string().nullable().max(200, '200 characters limit').trim(),
         aboutMe: Yup.string().nullable().max(200, '200 characters limit').trim(),
-        ...contactsValidationMapped
+        contacts: Yup.object(contactsValidationMapped)
     });
     const initialValues = {
         fullName: profile.fullName,
-        aboutMeInput: profile.aboutMe,
+        aboutMe: profile.aboutMe,
         lookingForAJob: profile.lookingForAJob,
         lookingForAJobDescription: profile.lookingForAJobDescription,
-        github: profile.contacts.github,
-        vk: profile.contacts.vk,
-        facebook: profile.contacts.facebook,
-        instagram: profile.contacts.instagram,
-        twitter: profile.contacts.twitter,
-        website: profile.contacts.website,
-        youtube: profile.contacts.youtube,
-        mainLink: profile.contacts.mainLink
+        contacts: {
+            github: profile.contacts.github,
+            vk: profile.contacts.vk,
+            facebook: profile.contacts.facebook,
+            instagram: profile.contacts.instagram,
+            twitter: profile.contacts.twitter,
+            website: profile.contacts.website,
+            youtube: profile.contacts.youtube,
+            mainLink: profile.contacts.mainLink
+        }
     }
     return(
         <Formik
@@ -79,25 +85,13 @@ const ProfileSettingsForm = ({profile, refreshAuthUserProfileData}) => {
             validationSchema={profileSettingsFormValidationSchema}
             onSubmit={(values)=>{
                 if(!lodash.isEqual(initialValues, values)){
-                    const profileDataFromSettings = {
-                        aboutMe: values.aboutMeInput,
-                        fullName: values.fullName,
-                        lookingForAJob: values.lookingForAJob,
-                        lookingForAJobDescription: values.lookingForAJobDescription,
-                        contacts: {
-                            github: values.github,
-                            vk: values.vk,
-                            facebook: values.facebook,
-                            instagram: values.instagram,
-                            twitter: values.twitter,
-                            website: values.website,
-                            youtube: values.youtube,
-                            mainLink: values.mainLink
-                        }
-                    };
                     setIsFetching(true);
-                    refreshAuthUserProfileData(profileDataFromSettings)
-                        .then(() => setIsFetching(false))
+                    refreshAuthUserProfileData(values)
+                        .then(() => {
+                            setIsFetching(false);
+                        })
+                }else{
+                    setGlobalMessage('No changes detected', false);
                 }
             }}
         >
@@ -113,7 +107,7 @@ const ProfileSettingsForm = ({profile, refreshAuthUserProfileData}) => {
                                error={formik.errors.fullName}
                         />
                         <Textarea
-                            id={'aboutMeInput'}
+                            id={'aboutMe'}
                             label={'About Me'}
                             minHeight={'80px'}
                             maxHeight={'100px'}
@@ -147,17 +141,19 @@ const ProfileSettingsForm = ({profile, refreshAuthUserProfileData}) => {
                                 let contact = profile.contacts[key] ? profile.contacts[key] : '';
                                 return(<InputText
                                     id={key}
+                                    name={`contacts.${key}`}
                                     label={key.charAt(0).toUpperCase() + key.slice(1)}
                                     value={contact}
                                     maxLength={150}
                                     minLength={5}
                                     width={'100%'}
                                     onChange={formik.handleChange}
-                                    error={formik.errors[key]}
+                                    error={formik.errors.contacts ? formik.errors.contacts[key] : ''}
+                                    key={nanoid()}
                                 />)
                             })
                         }
-                        <Button inner="Submit" type="submit" isFetching={isFetching}/>
+                        <Button inner="Submit" type="submit" isFetching={isFetching} fetchingMessage={'Sending...'} disabled={isFetching}/>
                     </form>
                 )
             }

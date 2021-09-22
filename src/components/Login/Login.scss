@@ -2,11 +2,12 @@
 
 @mixin loginFormInputCS{
   padding: 5px 30px 5px 30px;
-  border: 1px solid $smoothCommonOrange;
+  border: 1px solid $middleCommonOrange;
   border-radius: 5px;
   box-sizing: border-box;
   &:focus{
-    outline: 1px solid $commonOrange;
+    border: 1px solid $commonOrange;
+    outline: 2px solid $middleCommonOrange;
   }
 }
 
@@ -41,7 +42,6 @@
     color: $titleTextColor;
     text-align: center;
   }
-
 }
 
 @mixin inputIconsCS {
@@ -51,7 +51,6 @@
   left: 7px;
 }
 .login-form{
-
   &__email-box{
     margin-bottom: 5px;
     position: relative;
@@ -133,5 +132,10 @@
     display: block;
     font-size: 14px;
     color: $validationErrorColor;
+  }
+  &__captcha-img{
+    height: 70px;
+    display: block;
+    margin: 0 auto;
   }
 }

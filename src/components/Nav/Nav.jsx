@@ -15,38 +15,38 @@ const Nav = (props) => {
             <ul className='nav__list'>
                 <li>
                     <div className='nav__burger nav__item' onClick={burgerOnClick}>
-                        <i className="fas fa-bars"></i>
-                        <span className="nav__item-desciption">Collapse Menu</span>
+                        <i className="fas fa-bars"/>
+                        <span className="nav__item-description">Collapse Menu</span>
                     </div>
                 </li>
                 <li>
                     <NavLink className='nav__item' to='/profile'>
-                        <i className="far fa-user-circle"></i>
-                        <span className="nav__item-desciption">Profile</span>
+                        <i className="far fa-user-circle"/>
+                        <span className="nav__item-description">Profile</span>
                     </NavLink>
                 </li>
                 <li>
                     <NavLink className='nav__item' to='/dialogs'>
-                        <i className="far fa-envelope"></i>
-                        <span className="nav__item-desciption">Dialogs</span>
+                        <i className="far fa-envelope"/>
+                        <span className="nav__item-description">Dialogs</span>
                     </NavLink>
                 </li>
                 <li>
                     <NavLink className='nav__item' to='/news'>
-                        <i className="far fa-newspaper"></i>
-                        <span className="nav__item-desciption">News</span>
+                        <i className="far fa-newspaper"/>
+                        <span className="nav__item-description">News</span>
                     </NavLink>
                 </li>
                 <li>
                     <NavLink className='nav__item' to='/music'>
-                        <i className="fas fa-headphones-alt"></i>
-                        <span className="nav__item-desciption">Music</span>
+                        <i className="fas fa-headphones-alt"/>
+                        <span className="nav__item-description">Music</span>
                     </NavLink>
                 </li>
                 <li>
                     <NavLink className='nav__item' to='/settings'>
-                        <i className="fas fa-wrench"></i>
-                        <span className="nav__item-desciption">Settings</span>
+                        <i className="fas fa-wrench"/>
+                        <span className="nav__item-description">Settings</span>
                     </NavLink>
                 </li>
             </ul>

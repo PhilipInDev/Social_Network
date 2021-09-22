@@ -9,7 +9,7 @@ import ProfileStatus from "./ProfileStatus/ProfileStatus";
 const ProfileHeader = (props) => {
     let contactItems = [];
     for(let c in props.contacts){
-        contactItems.push(<NetworkContact link={props.contacts[c]} type={c} />)
+        contactItems.push(<NetworkContact link={props.contacts[c]} type={c} key={c}/>)
     }
     let backgroundImg = props.background ? props.background : defBgImg;
     let avatarImg = props.avatar ? props.avatar : defAvaImg;

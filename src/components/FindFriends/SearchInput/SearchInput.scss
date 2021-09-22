@@ -1,0 +1,26 @@
+@import "../../sharedStyles";
+
+.search-input{
+  &__search-box{
+    width: 100%;
+    height: 50px;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  &__search-input{
+    height: 100%;
+    flex: 0 1 95%;
+    padding: 5px 20px;
+    box-sizing: border-box;
+    @include inputReset;
+  }
+  &__search-btn-submit{
+    @include buttonReset;
+    i{
+      cursor: pointer;
+    }
+  }
+}
