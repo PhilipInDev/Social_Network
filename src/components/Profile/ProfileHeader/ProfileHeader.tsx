@@ -2,13 +2,25 @@ import './ProfileHeader.scss';
 import NetworkContact from "../../SharedComponents/NetworkContact/NetworkContact";
 import defBgImg from '../../../assets/images/currDefProfileBg.png'
 import defAvaImg from '../../../assets/images/defaultAvatar.png';
-import React from 'react';
+import React, {FC} from 'react';
 import ProfileStatus from "./ProfileStatus/ProfileStatus";
+import {UserProfileContactsType} from "../../../types/types";
+
+type ProfileHeaderPropsType = {
+    background: string | null
+    avatar: string | null
+    name: string
+    userStatus: string
+    contacts: UserProfileContactsType
+    statusEditable: boolean
+    putUserStatus: Function
+}
 
 
-const ProfileHeader = (props) => {
+const ProfileHeader: FC<ProfileHeaderPropsType> = (props) => {
     let contactItems = [];
     for(let c in props.contacts){
+        // @ts-ignore
         contactItems.push(<NetworkContact link={props.contacts[c]} type={c} key={c}/>)
     }
     let backgroundImg = props.background ? props.background : defBgImg;

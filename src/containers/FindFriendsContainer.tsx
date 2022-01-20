@@ -1,10 +1,10 @@
-import {connect} from "react-redux";
-import React from 'react';
+import {connect,  ConnectedProps} from "react-redux";
+import React, {FC, useEffect} from 'react';
 import {
     deleteFriend,
     getAdditionalUsers,
     getUsers, postAddFriend,
-    setCurrentPage, setSearchCondition,
+    setCurrentPage, setSearchConditions,
     setTotalCount,
     setUsers,
     setUsersCount, toggleAddingFriend,
@@ -12,17 +12,26 @@ import {
     toggleIsFetching, toggleWhichFriendIsAdding
 } from "../reducers/findFriends";
 import FindFriends from "../components/FindFriends/FindFriends";
-import {withRouter} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import {withAuthRedirect} from "../hoc/withAuthRedirect";
 import {compose} from "redux";
 import {withGlobalMessage} from "../hoc/withGlobalMessage";
+import {RootState} from "../redux/reduxStore";
+import qs from 'qs';
 
-
-class FindFriendsContainer extends React.Component{
-    componentDidMount() {
+const FindFriendsContainer: FC<FindFriendsPropsType> = (props) => {
+    let location: any = useLocation();
+    const paramsParsed = qs.parse(location.search, { ignoreQueryPrefix: true });
+    const {term, isOnlyFriends} = props.searchConditions;
+    useEffect(() => {
         window.scrollTo( 0, 0 );
-        let urlPageNum = this.props.location.search ? this.props.location.search.match(/[0-9]+/gi)[0] : 1;
-        this.props.getUsers(this.props.usersCount, urlPageNum);
+        if(location.search){
+            const urlPageNum = paramsParsed.page ? paramsParsed.page : 1;
+            const friends = paramsParsed.friends ? paramsParsed.friends as string : isOnlyFriends;
+            const finalTerm = paramsParsed.term ? paramsParsed.term as string : term;
+            props.getUsers(props.usersCount, +urlPageNum, finalTerm, friends);
+        }
+        if(!location.search) props.getUsers(props.usersCount, 1, '', null)
         //     .then(() => countGoodUsers());
         // const countGoodUsers = async () => {
         //     const pagesCount = Math.ceil(this.props.totalCount / 100);
@@ -44,15 +53,13 @@ class FindFriendsContainer extends React.Component{
         //                 })
         //         }, 1000)
         // }
-    }
-    render(){
-        return(
-            <FindFriends {...this.props}/>
-        )
-    }
+    },[location.search])
+    return(
+        <FindFriends {...props}/>
+    )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: RootState) => {
     return{
         users: state.findFriends.users,
         usersCount: state.findFriends.usersCount,
@@ -61,10 +68,28 @@ const mapStateToProps = (state) => {
         isFetching: state.findFriends.isFetching,
         isAddingFriend: state.findFriends.isAddingFriend,
         whichFriendIsAdding: state.findFriends.whichFriendIsAdding,
-        searchCondition: state.findFriends.searchCondition
+        searchConditions: state.findFriends.searchConditions
     }
 }
-
+const connector = connect(
+    mapStateToProps,
+    {
+        toggleFriend,
+        setUsers,
+        setUsersCount,
+        setTotalCount,
+        setCurrentPage,
+        toggleIsFetching,
+        toggleAddingFriend,
+        toggleWhichFriendIsAdding,
+        getUsers,
+        getAdditionalUsers,
+        postAddFriend,
+        deleteFriend,
+        setSearchConditions
+    }
+);
+export type FindFriendsPropsType = ConnectedProps<typeof connector>
 /*
 const mapDispatchToProps = (dispatch) => {
     return{
@@ -113,23 +138,6 @@ const mapDispatchToProps = (dispatch) => {
 //     })(findFriendsWithRouter)
 
 export default compose(
-    connect(mapStateToProps,
-        {
-            toggleFriend,
-            setUsers,
-            setUsersCount,
-            setTotalCount,
-            setCurrentPage,
-            toggleIsFetching,
-            toggleAddingFriend,
-            toggleWhichFriendIsAdding,
-            getUsers,
-            getAdditionalUsers,
-            postAddFriend,
-            deleteFriend,
-            setSearchCondition
-        }),
-    withRouter,
+    connector,
     withAuthRedirect,
-    withGlobalMessage
-)(FindFriendsContainer);
+    withGlobalMessage)(FindFriendsContainer);

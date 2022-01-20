@@ -1,37 +1,53 @@
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
+import {UserItemType, UserProfileType} from "../types/types";
 
 const instanceAxios = axios.create({
     withCredentials: true,
     headers: {
-        'API-KEY': '766a1cb3-b0eb-40b3-b01e-c5a8e95314af'
+        'API-KEY': '33944b96-dc0e-43ef-af5e-764a7198445e'
     },
     baseURL: 'https://social-network.samuraijs.com/api/1.0/'
 })
 
-const requestCommonThen = (request) => {
+export type ResponseBox<DataType = {}, RC = ResultCodes> = {
+    data: DataType
+    resultCode: RC
+    messages: Array<string>
+}
+export type GetUsersResponseType = {
+    items: UserItemType[]
+    totalCount: number
+    error: string
+}
+export enum ResultCodes {
+    Success = 0,
+    Error = 1,
+    CaptchaRequired = 10
+}
+const requestCommonThen = (request: Function) => {
     return request()
-        .then((response) => response.data)
-        .catch(error => Promise.reject(error.message))
+        .then((response: AxiosResponse) => response.data)
+        .catch((error: any) => Promise.reject(error.message))
 }
 
 export const UsersAPI = {
-    getUsers(usersCount = 10, page = 1, term = '', friend = 0) {
+    getUsers(usersCount = 10, page = 1, term: string | null, friend: boolean | string | null) {
         const nameToSearch =  term ? `&term=${term}` : '';
-        const isOnlyFriends = friend === 0 ? '' : `&friend=${friend}`;
+        const isOnlyFriends = friend === null ? '' : `&friend=${friend}`;
         return requestCommonThen(() =>
             instanceAxios
-                .get(`users?count=${usersCount}&page=${page}${nameToSearch}${isOnlyFriends}`)
+                .get<GetUsersResponseType>(`users?count=${usersCount}&page=${page}${nameToSearch}${isOnlyFriends}`)
         )
     },
 }
 
 export const ProfileAPI = {
-    getUserProfileData(id) {
+    getUserProfileData(id: number) {
         return instanceAxios
-            .get(`profile/${id}`)
+            .get<UserProfileType>(`profile/${id}`)
             .then((response) => response.data)
     },
-    putUsersPhoto(formData) {
+    putUsersPhoto(formData: FormData) {
         return instanceAxios
             .put('profile/photo', formData, {
                 headers: {
@@ -40,19 +56,19 @@ export const ProfileAPI = {
             })
             .then((response) => response.data)
     },
-    getUserStatus(id){
+    getUserStatus(id: number){
         return requestCommonThen(() =>
             instanceAxios
-                .get(`profile/status/${id}`)
+                .get<ResponseBox<string>>(`profile/status/${id}`)
         )
     },
-    putUserStatus(status){
+    putUserStatus(status: string){
         return requestCommonThen(() =>
             instanceAxios
-                .put('profile/status', status)
+                .put('profile/status', {status})
         )
     },
-    putUserProfile(profileData){
+    putUserProfile(profileData: UserProfileType){
         return requestCommonThen(() =>
             instanceAxios
                 .put('profile', profileData)
@@ -61,12 +77,12 @@ export const ProfileAPI = {
 }
 
 export const FollowAPI = {
-    postAddFriend(id = 1) {
+    postAddFriend(id: number = 1) {
         return instanceAxios
             .post(`follow/${id}`)
             .then((response) => response.data)
     },
-    deleteFriend(id) {
+    deleteFriend(id: number) {
         return instanceAxios
             .delete(`follow/${id}`)
             .then((response) => response.data)
@@ -75,10 +91,12 @@ export const FollowAPI = {
 export const AuthAPI = {
     getAuthUserData() {
         return instanceAxios
-            .get('auth/me')
+            .get<ResponseBox<{id: number
+                email: string
+                login: string}>>('auth/me')
             .then((response) => response.data)
     },
-    authorize(email, password, rememberMe, captcha=''){
+    authorize(email: string, password: string, rememberMe: boolean, captcha: string = ''){
         return instanceAxios
             .post('auth/login', {
                 email: email,
@@ -98,7 +116,7 @@ export const SecurityAPI = {
     getCaptcha(){
         return requestCommonThen(() =>
             instanceAxios
-                .get('security/get-captcha-url')
+                .get<ResponseBox<{url: string}>>('security/get-captcha-url')
         )
     }
 }

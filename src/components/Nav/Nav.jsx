@@ -1,11 +1,12 @@
 import './Nav.scss'
 import {NavLink} from "react-router-dom";
 import React, { useState } from 'react';
+import {useOutsideAlerter} from "../SharedComponents/sharedFunc";
 
 const Nav = (props) => {
-    const navBarRef = React.createRef()
+    const navBarRef = React.createRef();
     const [isNavBarOpened, toggleNavBarOpening] = useState(false);
-
+    useOutsideAlerter(navBarRef, toggleNavBarOpening);
     const burgerOnClick = () => {
         toggleNavBarOpening(!isNavBarOpened)
     }

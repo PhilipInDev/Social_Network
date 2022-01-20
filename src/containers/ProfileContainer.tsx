@@ -1,20 +1,24 @@
-import React, {useEffect} from 'react';
+import React, {FC, useEffect} from 'react';
 import Profile from "../components/Profile/Profile";
-import {connect} from "react-redux";
+import {connect, ConnectedProps} from "react-redux";
 import {
     initUserProfileWithDataInMemory,
     initUserProfileWithoutDataInMemory,
     putUserStatus
 } from "../reducers/profile";
-import {withRouter} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {withAuthRedirect} from "../hoc/withAuthRedirect";
 import {compose} from "redux";
 import {withGlobalMessage} from "../hoc/withGlobalMessage";
+import {RootState} from "../redux/reduxStore";
 
-export const ProfileContainer = (props) => {
+type RouteParams = {
+    userId: string
+}
+export const ProfileContainer: FC<ProfilePropsType> = (props) => {
+    const userId = +useParams<RouteParams>().userId;
     useEffect(() => {
         window.scrollTo( 0, 0 );
-        let userId = +props.match.params.userId;
         if(userId !== props.profile?.userId || !userId){
             if(JSON.stringify(props.authUserProfile) !== JSON.stringify(props.profile) || props.authUserStatus !== props.userStatus){
                 if(props.authUserProfile && !props.isGettingProfileData){
@@ -25,14 +29,14 @@ export const ProfileContainer = (props) => {
                 props.initUserProfileWithoutDataInMemory(userId);
             }
         }
-    }, [props.match.params.userId, props.authUserProfile])
+    }, [userId, props.authUserProfile, props.authUserStatus])
 
     return(
             <Profile {...props}/>
     )
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState) => ({
     profile: state.profile.userProfile,
     userStatus: state.profile.userStatus,
     authUserProfile: state.auth.authorizedUserProfile,
@@ -41,15 +45,15 @@ const mapStateToProps = (state) => ({
     isAuth: state.auth.isAuth,
     isGettingProfileData: state.profile.isGettingProfileData
 })
-
-
-export default compose(
-    connect(mapStateToProps,{
+const connector = connect(mapStateToProps,{
         initUserProfileWithDataInMemory,
         initUserProfileWithoutDataInMemory,
         putUserStatus
-    }),
-    withRouter,
+    });
+export type ProfilePropsType = ConnectedProps<typeof connector>;
+
+export default compose(
+    connector,
     withAuthRedirect,
     withGlobalMessage
 )(ProfileContainer);

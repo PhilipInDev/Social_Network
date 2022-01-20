@@ -1,13 +1,19 @@
 import './ProfileStatus.scss';
-import React, {useRef, useState} from "react";
+import React, {FC, useRef, useState} from "react";
 
-const ProfileStatus = (props) => {
+type ProfileStatusPropsType = {
+    statusEditable: boolean
+    userStatus: string
+    putUserStatus: Function
+}
+
+const ProfileStatus: FC<ProfileStatusPropsType> = (props) => {
     let [isStatusEditing, toggleStatusEditing] = useState(false);
     let [localStatus, setLocalStatus] = useState('');
-    let statusInputBoxRef = useRef();
+    let statusInputBoxRef = useRef<HTMLDivElement>(null);
     const putUserStatusAndToggleStatusEditing = () => {
         if(props.userStatus !== localStatus){
-            props.putUserStatus({ status: localStatus });
+            props.putUserStatus(localStatus);
         }
         toggleStatusEditing(false);
     }

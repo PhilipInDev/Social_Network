@@ -1,7 +1,7 @@
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import './App.scss';
 import React, {useEffect} from 'react';
-import store from "./redux/reduxStore";
+import store, {RootState} from "./redux/reduxStore";
 import {connect, Provider} from "react-redux";
 import Nav from "./components/Nav/Nav";
 import Dialogs from "./components/Dialogs/Dialogs";
@@ -15,32 +15,25 @@ import SettingsContainer from "./containers/SettingsContainer";
 import Preloader from "./components/SharedComponents/Preloader/Preloader";
 import {compose} from "redux";
 import {getAuthUserDataAndGetSetAuthUserProfileData} from "./reducers/auth";
-import {removeGlobalMessage, setGlobalMessage, toggleInitialized} from "./reducers/app";
+import {useAppReducerDispatch, useAppState} from "./reducers/app";
 import {withSuspense} from "./hoc/withSuspense";
 import GlobalMessage from "./components/SharedComponents/GlobalMessage/GlobalMessage";
 
-const LoginContainer = React.lazy(() => import("./containers/LoginContainer"));
+const LoginContainer = React.lazy((): Promise<{ default: any }> => import("./containers/LoginContainer"));
 
-const App = (props) => {
-    const globalMessageArray = props.state.app.globalMessage.length
-        ? props.state.app.globalMessage
+const App = (props: {state: RootState, getAuthUserDataAndGetSetAuthUserProfileData: Function}) => {
+    const { initialized, globalMessage } = useAppState();
+    const { toggleInitialized, removeGlobalMessage } = useAppReducerDispatch();
+    const globalMessageArray = globalMessage.length
+        ? globalMessage
         : null;
-    // const catchUnhandledRejection = (e) => {
-    //     props.setGlobalMessage(`${e.reason}`, false);
-    //     console.log(e.promise);
-    //     e.preventDefault();
-    // }
     useEffect(() => {
         props.getAuthUserDataAndGetSetAuthUserProfileData()
             .then(() => {
-                props.toggleInitialized(true);
+                toggleInitialized(true);
             })
-        // window.addEventListener('unhandledrejection', catchUnhandledRejection);
-        // return () => {
-        //     window.removeEventListener('unhandledrejection', catchUnhandledRejection);
-        // }
     }, [])
-    if(!props.state.app.initialized){
+    if(!initialized){
         return (
             <div className='app-wrapper'>
                 <div className="main-wrapper main">
@@ -50,8 +43,11 @@ const App = (props) => {
         )
     }
     let dialogsComponent = () => <Dialogs state={props.state}/>;
+    // @ts-ignore
     let profileContainerComponent = () => <ProfileContainer />;
+    // @ts-ignore
     let findFriendsContainerComponent = () => <FindFriendsContainer />;
+    // @ts-ignore
     let settingsContainerComponent = () => <SettingsContainer />;
 
     return (
@@ -63,7 +59,7 @@ const App = (props) => {
                 {globalMessageArray
                     ? <GlobalMessage message={globalMessageArray[globalMessageArray.length - 1]?.message}
                                      isSuccess={globalMessageArray[globalMessageArray.length - 1]?.isSuccess}
-                                     removeMessageFunc={props.removeGlobalMessage}/>
+                                     removeMessageFunc={removeGlobalMessage}/>
                     : null}
                 <Switch>
                     <Route path='/profile/:userId?'
@@ -100,12 +96,12 @@ const App = (props) => {
     );
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state: RootState) => ({
     state: state,
 });
 
 let AppContainer = compose(
-    connect(mapStateToProps,{ getAuthUserDataAndGetSetAuthUserProfileData, toggleInitialized, removeGlobalMessage, setGlobalMessage }),
+    connect(mapStateToProps,{ getAuthUserDataAndGetSetAuthUserProfileData }),
 )(App);
 
 const SocialNetworkApp = () => {

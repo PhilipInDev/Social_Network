@@ -6,6 +6,31 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import InputText from "../SharedComponents/InputText/InputText";
 
+
+const loginFormValidationSchema = Yup.object({
+    loginEmailInput: Yup.string().email('Invalid email address').required('Required'),
+    loginPwdInput: Yup.string().required('Required')
+});
+const togglePwdVisibilityOnClick = (ref, toggler) => {
+    if (ref.current.type === 'password') {
+        ref.current.type = 'text';
+        toggler('text')
+    } else {
+        ref.current.type = 'password';
+        toggler('password')
+    }
+}
+const choosePwdVisibilityIcon = (inputType) => {
+    if(inputType === 'password'){
+        return <i className="fas fa-eye-slash login-form__pwd-toggle-visibility-icon" />
+    }
+    if(inputType === 'text'){
+        return  <i className="fas fa-eye login-form__pwd-toggle-visibility-icon" />
+    }
+}
+const submitBtn = (isDisabled) => <Button inner="Submit" type="submit" disabled={isDisabled} isFetching={isDisabled} fetchingMessage={'Submitting...'}/>;
+
+
 const Login = (props) => {
     const reactToIncorrectAuthData = props.isAuthDataIncorrect ? 'login__box--shaking login__box--red' : '';
     if(props.isAuthDataIncorrect){
@@ -27,30 +52,7 @@ const Login = (props) => {
 const LoginForm = (props) => {
     let [pwdInputType, setPwdInputType] = useState('password');
     let [isSubmitting, toggleIsSubmitting] = useState(false);
-    const loginFormValidationSchema = Yup.object({
-        loginEmailInput: Yup.string().email('Invalid email address').required('Required'),
-        loginPwdInput: Yup.string().required('Required')
-    });
     const pwdInputRef = React.createRef();
-    const togglePwdVisibilityOnClick = () => {
-        if (pwdInputRef.current.type === 'password') {
-            pwdInputRef.current.type = 'text';
-            setPwdInputType('text')
-        } else {
-            pwdInputRef.current.type = 'password';
-            setPwdInputType('password')
-        }
-    }
-    const choosePwdVisibilityIcon = () => {
-        if(pwdInputType === 'password'){
-            return <i className="fas fa-eye-slash login-form__pwd-toggle-visibility-icon" />
-        }
-        if(pwdInputType === 'text'){
-            return  <i className="fas fa-eye login-form__pwd-toggle-visibility-icon" />
-        }
-    }
-    const submitBtn = (isDisabled) => <Button inner="Submit" type="submit" disabled={isDisabled} isFetching={isDisabled} fetchingMessage={'Submiting...'}/>;
-
     return (
         <Formik
             initialValues={{
@@ -68,7 +70,7 @@ const LoginForm = (props) => {
                     })
                     .catch((message) => {
                         toggleIsSubmitting(false);
-                        props.setGlobalMessage(message[0], false)
+                        props.setGlobalMessage({message: message[0],isSuccess: false})
                     })
             }}
         >
@@ -87,8 +89,8 @@ const LoginForm = (props) => {
                     <div className="login-form__pwd-box">
                         <i className="fas fa-lock login-form__pwd-box-icon" />
                         <input onChange={formik.handleChange} type="password" id="loginPwdInput" ref={pwdInputRef} className="login-form__pwd"/>
-                        <label onClick={togglePwdVisibilityOnClick} htmlFor="login-toggle-visibility" className="login-form__pwd-toggle-visibility-label">
-                            {choosePwdVisibilityIcon()}
+                        <label onClick={() => togglePwdVisibilityOnClick(pwdInputRef, setPwdInputType)} htmlFor="login-toggle-visibility" className="login-form__pwd-toggle-visibility-label">
+                            {choosePwdVisibilityIcon(pwdInputType)}
                         </label>
                         <input type="checkbox"  id="login-toggle-visibility" className="login-form__pwd-toggle-visibility"/>
                     </div>

@@ -23,6 +23,7 @@
 
 .login{
   @include flexCenter;
+  height: 100%;
   box-sizing: border-box;
 
   &__box{

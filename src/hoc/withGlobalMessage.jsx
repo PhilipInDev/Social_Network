@@ -3,14 +3,14 @@ import {useEffect} from "react";
 import {removeGlobalMessage} from "../reducers/app";
 
 export const withGlobalMessage = (Component) => {
-    const RedirectComponent = (props) => {
+    const ComponentWithGlobalMessage = (props) => {
         useEffect(() => {
             return () => {
-                props.removeGlobalMessage();
+                if(props.globalMessage.length) props.removeGlobalMessage();
             }
         },[props.removeGlobalMessage])
         return <Component {...props}/>
     }
 
-    return connect(null, { removeGlobalMessage })(RedirectComponent);
+    return connect((state) => ({globalMessage: state.app.globalMessage}), { removeGlobalMessage })(ComponentWithGlobalMessage);
 }

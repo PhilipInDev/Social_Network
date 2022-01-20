@@ -1,20 +1,19 @@
-import './Pagination.scss'
+import './Pagination.scss';
 import React, {useState} from 'react';
-import {NavLink} from "react-router-dom";
 import {nanoid} from "nanoid";
 
-const Pagination = ({ currentPage, itemsCount, totalCount, getItems, searchCondition, numOfLinks, url='/users?page='}) => {
+const space = (onClick, mod) => <div key={nanoid()} onClick={() => onClick(mod)} className='pagination__number-box'><span className="pagination__number">...</span></div>;
+
+const Pagination = ({ currentPage, itemsCount, totalCount, getItems, numOfLinks}) => {
     const pagesCount = Math.ceil(totalCount / itemsCount);
     let linksCount = pagesCount;
     let [startLinkNum, setStartLinkNum] = useState(null);
     let startLinkNumVar = 1;
     const linkSize = (currentPage + '').length >= 5 ? 'pagination__number-box--large' : '';
-    const space = (onClick, mod) => <div key={nanoid()} onClick={() => onClick(mod)} className='pagination__number-box'><span className="pagination__number">...</span></div>;
 
     const getLink = (page) => {
         return (
-            <NavLink key={nanoid()}
-                     to={`${url}${page}`}
+            <div key={nanoid()}
                      className={page !== currentPage ? `pagination__number-box ${linkSize}` : `pagination__number-box pagination__current-page ${linkSize}`}
                      onClick={() => {
                          changeCurrentPageOnClick(page);
@@ -26,7 +25,7 @@ const Pagination = ({ currentPage, itemsCount, totalCount, getItems, searchCondi
                 >
                     {page}
                 </span>
-            </NavLink>
+            </div>
         )
     }
     const getStartNumAndFinishNumByCurrentPage = (currentPage, pagesCount, additionalLinks, numOfLinks) => {
@@ -76,7 +75,7 @@ const Pagination = ({ currentPage, itemsCount, totalCount, getItems, searchCondi
     }
     const changeCurrentPageOnClick = (page) => {
         window.scrollTo( 0, 0 );
-        getItems(itemsCount, page, searchCondition);
+        getItems(itemsCount, page);
     }
     const watchAdditionalLinksOnClick = (mod = numOfLinks) => {
         if(startLinkNumVar > numOfLinks && Math.sign(mod) === -1){
@@ -97,19 +96,16 @@ const Pagination = ({ currentPage, itemsCount, totalCount, getItems, searchCondi
     }
     return (
         <div className={'pagination'}>
-            <NavLink to={`${url}${currentPage > 1 ? currentPage - 1 : currentPage}`}
-                     onClick={() => arrowOnClick(-1)}
-                     className="pagination__arrow pagination__arrow-prev"
-                     data-testid={'prev'}
+            <div onClick={() => arrowOnClick(-1)}
+                 className="pagination__arrow pagination__arrow-prev"
+                 data-testid={'prev'}
             />
             <div className={"pagination__numbers-box"} >
                 {mapPageLinks(startLinkNum)}
             </div>
-            <NavLink
-                to={`${url}${currentPage < pagesCount ? currentPage + 1 : currentPage}`}
-                onClick={() => arrowOnClick(1)}
-                className="pagination__arrow pagination__arrow-next"
-                data-testid={'next'}
+            <div onClick={() => arrowOnClick(1)}
+                 className="pagination__arrow pagination__arrow-next"
+                 data-testid={'next'}
             />
         </div>
     )

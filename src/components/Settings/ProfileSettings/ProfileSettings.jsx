@@ -1,4 +1,4 @@
-import './ProfileSettings.scss'
+import './ProfileSettings.scss';
 import React, {useState} from "react";
 import Button from "../../SharedComponents/Button";
 import defAvatar from '../../../assets/images/defaultAvatar.png';
@@ -8,7 +8,6 @@ import InputCheckbox from "../../SharedComponents/InputCheckbox/InputCheckbox";
 import Textarea from "../../SharedComponents/Textarea/Textarea";
 import * as Yup from "yup";
 import lodash from "lodash";
-import {nanoid} from "nanoid";
 
 const ProfileSettings = ({profile, authUserId, photo, putNewUserPhotoAndRefreshProfileState,refreshAuthUserProfileData, setGlobalMessage}) => {
     let [file, setFile] = useState(null);
@@ -91,7 +90,7 @@ const ProfileSettingsForm = ({profile, refreshAuthUserProfileData, setGlobalMess
                             setIsFetching(false);
                         })
                 }else{
-                    setGlobalMessage('No changes detected', false);
+                    setGlobalMessage({message: 'No changes detected', isSuccess: false});
                 }
             }}
         >
@@ -140,16 +139,16 @@ const ProfileSettingsForm = ({profile, refreshAuthUserProfileData, setGlobalMess
                             Object.keys(profile.contacts).map((key) => {
                                 let contact = profile.contacts[key] ? profile.contacts[key] : '';
                                 return(<InputText
-                                    id={key}
-                                    name={`contacts.${key}`}
-                                    label={key.charAt(0).toUpperCase() + key.slice(1)}
-                                    value={contact}
-                                    maxLength={150}
-                                    minLength={5}
-                                    width={'100%'}
-                                    onChange={formik.handleChange}
-                                    error={formik.errors.contacts ? formik.errors.contacts[key] : ''}
-                                    key={nanoid()}
+                                        id={key}
+                                        name={`contacts.${key}`}
+                                        label={key.charAt(0).toUpperCase() + key.slice(1)}
+                                        value={contact}
+                                        maxLength={150}
+                                        minLength={5}
+                                        width={'100%'}
+                                        onChange={formik.handleChange}
+                                        error={formik.errors.contacts ? formik.errors.contacts[key] : ''}
+                                        key={key}
                                 />)
                             })
                         }

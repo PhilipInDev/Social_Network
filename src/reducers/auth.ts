@@ -1,5 +1,7 @@
-import {AuthAPI, ProfileAPI, SecurityAPI} from "../api/api";
+import {AuthAPI, ProfileAPI, ResultCodes, SecurityAPI} from "../api/api";
 import {setGlobalMessage} from "./app";
+import {UserProfileType} from "../types/types";
+import {AppThunk} from "../redux/reduxStore";
 
 export const SET_ME = 'SET_USER_DATA';
 export const SET_AUTH_USER_PROFILE = 'SET_AUTH_USER_PROFILE';
@@ -10,18 +12,19 @@ export const SET_AUTH_USER_STATUS = 'SET_AUTH_USER_STATUS';
 export const SET_CAPTCHA_URL = 'SET_CAPTCHA_URL';
 
 const initialState = {
-    id: null,
-    email: null,
-    login: null,
-    captchaURL: null,
-    isAuth: false,
-    isAuthorizing: false,
-    isAuthDataIncorrect: false,
-    authorizedUserProfile: null,
-    authUserStatus: ''
+    id: null as number | null,
+    email: null as string | null,
+    login: null as string | null,
+    captchaURL: null as string | null,
+    isAuth: false as boolean,
+    isAuthorizing: false as boolean,
+    isAuthDataIncorrect: false as boolean,
+    authorizedUserProfile: null as UserProfileType | null,
+    authUserStatus: '' as string
 }
+type AuthInitialStateType = typeof initialState;
 
-const authReducer = (state = initialState, action) => {
+const authReducer = (state = initialState, action: AuthActionTypes): AuthInitialStateType=> {
     switch (action.type) {
         case SET_ME:
             return {
@@ -62,42 +65,74 @@ const authReducer = (state = initialState, action) => {
             return state;
     }
 }
+type AuthActionTypes = SetMeType | SetAuthUserProfileType | ToggleAuthType | ToggleIsAuthDataIncorrectType | ToggleIsAuthorizingType | SetAuthUserStatusType | SetCaptchaURLType;
 
-export const setMe = (data) => ({
+type SetMeDataType = {
+    id: number | null
+    email: string | null
+    login: string | null
+}
+type SetMeType = {
+    type: typeof SET_ME
+    data: SetMeDataType | null
+}
+export const setMe = (data: SetMeDataType | null): SetMeType => ({
     type: SET_ME,
     data
 })
-export const setAuthUserProfile = (profile) => ({
+type SetAuthUserProfileType = {
+    type: typeof SET_AUTH_USER_PROFILE
+    profile: UserProfileType | null
+}
+export const setAuthUserProfile = (profile: UserProfileType | null): SetAuthUserProfileType => ({
     type: SET_AUTH_USER_PROFILE,
     profile
 })
-export const toggleAuth = (isAuth) => ({
+type ToggleAuthType = {
+    type: typeof TOGGLE_AUTH
+    isAuth: boolean
+}
+export const toggleAuth = (isAuth: boolean): ToggleAuthType => ({
     type: TOGGLE_AUTH,
     isAuth
 })
-
-export const toggleIsAuthDataIncorrect = (isIncorrect) => ({
+type ToggleIsAuthDataIncorrectType = {
+    type: typeof TOGGLE_IS_AUTH_DATA_INCORRECT
+    isAuthDataIncorrect: boolean
+}
+export const toggleIsAuthDataIncorrect = (isIncorrect: boolean): ToggleIsAuthDataIncorrectType => ({
     type: TOGGLE_IS_AUTH_DATA_INCORRECT,
     isAuthDataIncorrect: isIncorrect
 })
-
-export const toggleIsAuthorizing = (isAuthorizing) => ({
+type ToggleIsAuthorizingType = {
+    type: typeof TOGGLE_IS_AUTHORIZING
+    isAuthorizing: boolean
+}
+export const toggleIsAuthorizing = (isAuthorizing: boolean): ToggleIsAuthorizingType => ({
     type: TOGGLE_IS_AUTHORIZING,
     isAuthorizing
 })
-
-export const setAuthUserStatus = (authUserStatus) => ({
+type SetAuthUserStatusType = {
+    type: typeof SET_AUTH_USER_STATUS
+    authUserStatus: string
+}
+export const setAuthUserStatus = (authUserStatus: string): SetAuthUserStatusType => ({
     type: SET_AUTH_USER_STATUS,
     authUserStatus
 })
-export const setCaptchaURL = (captchaURL) =>({
+type SetCaptchaURLType = {
+    type: typeof SET_CAPTCHA_URL
+    captchaURL: string
+}
+export const setCaptchaURL = (captchaURL: string): SetCaptchaURLType =>({
     type: SET_CAPTCHA_URL,
     captchaURL
 })
-export const putNewUserPhotoAndRefreshProfileState = (formData, authUserId) => (dispatch) =>{
+
+export const putNewUserPhotoAndRefreshProfileState = (formData: FormData, authUserId: number):AppThunk => (dispatch) =>{
     ProfileAPI.putUsersPhoto(formData)
         .then((response)=>{
-            if(!response.resultCode){
+            if(response.resultCode === ResultCodes.Success){
                 ProfileAPI.getUserProfileData(authUserId)
                     .then((profileData) => {
                         dispatch(setAuthUserProfile(profileData));
@@ -106,10 +141,10 @@ export const putNewUserPhotoAndRefreshProfileState = (formData, authUserId) => (
         })
 }
 
-export const getAuthUserDataAndGetSetAuthUserProfileData = () => async (dispatch) => {
+export const getAuthUserDataAndGetSetAuthUserProfileData = ():AppThunk => async (dispatch) => {
     dispatch(toggleIsAuthorizing(true));
     let data = await AuthAPI.getAuthUserData()
-    if(!data.resultCode) {
+    if(data.resultCode === ResultCodes.Success) {
         dispatch(toggleAuth(true));
         dispatch(setMe(data.data));
         let profileData = await ProfileAPI.getUserProfileData(data.data.id);
@@ -119,12 +154,12 @@ export const getAuthUserDataAndGetSetAuthUserProfileData = () => async (dispatch
     }
     dispatch(toggleIsAuthorizing(false));
 }
-export const getAuthUserData = () => (dispatch) => {
+export const getAuthUserData = ():AppThunk => (dispatch) => {
     dispatch(toggleIsAuthorizing(true))
     AuthAPI.getAuthUserData()
         .then((data) => {
             dispatch(toggleIsAuthorizing(false))
-            if(!data.resultCode){
+            if(data.resultCode === ResultCodes.Success){
                 dispatch(toggleAuth(true))
             }
             if(data.resultCode){
@@ -133,16 +168,16 @@ export const getAuthUserData = () => (dispatch) => {
         })
 }
 
-export const authorize = (email, password, rememberMe, captcha) => (dispatch) => {
+export const authorize = (email: string, password: string, rememberMe: boolean, captcha: string):AppThunk => (dispatch) => {
     return AuthAPI.authorize(email, password, rememberMe, captcha)
         .then((data) => {
-            if(!data.resultCode){
+            if(data.resultCode === ResultCodes.Success){
                 dispatch(toggleIsAuthDataIncorrect(false));
                 dispatch(getAuthUserDataAndGetSetAuthUserProfileData());
                 return Promise.resolve(data.messages);
             }
             if(data.resultCode){
-                if(data.resultCode === 10){
+                if(data.resultCode === ResultCodes.CaptchaRequired){
                     dispatch(getCaptchaURL())
                 }
                 dispatch(toggleIsAuthDataIncorrect(true))
@@ -151,36 +186,36 @@ export const authorize = (email, password, rememberMe, captcha) => (dispatch) =>
         })
 }
 
-export const unAuthorize = () => (dispatch) => {
+export const unAuthorize = ():AppThunk => (dispatch) => {
     AuthAPI.unAuthorize()
         .then((data) => {
-            if (!data.resultCode) {
+            if (data.resultCode === ResultCodes.Success) {
                 dispatch(toggleAuth(false));
                 dispatch(setAuthUserProfile(initialState.authorizedUserProfile));
                 dispatch(setMe(null));
             }
         })
 }
-export const refreshAuthUserProfileData = (profileData) => async (dispatch) => {
+export const refreshAuthUserProfileData = (profileData: UserProfileType):AppThunk => async (dispatch) => {
     try {
         const dataResult = await ProfileAPI.putUserProfile(profileData)
-        if (!dataResult.resultCode) {
+        if (dataResult.resultCode === ResultCodes.Success) {
             const authUserData = await AuthAPI.getAuthUserData();
             const authUserProfileData = await ProfileAPI.getUserProfileData(authUserData.data.id);
             dispatch(setAuthUserProfile(authUserProfileData));
-            dispatch(setGlobalMessage('Profile update is successful', true));
+            dispatch(setGlobalMessage({message: 'Profile update is successful', isSuccess: true}));
         }
-    } catch (error) {
-        dispatch(setGlobalMessage(error, false));
+    } catch (error: any) {
+        dispatch(setGlobalMessage({message: error, isSuccess: false}));
     }
 }
 
-export const getCaptchaURL = () => async (dispatch) => {
+export const getCaptchaURL = ():AppThunk => async (dispatch) => {
     try {
         const response = await SecurityAPI.getCaptcha();
-        if(response.resultCode === 0) dispatch(setCaptchaURL(response.url))
-    }catch (error){
-        dispatch(setGlobalMessage(error, false))
+        dispatch(setCaptchaURL(response.url))
+    }catch (error: any){
+        dispatch(setGlobalMessage({message: error, isSuccess: false}))
     }
 
 }

@@ -3,10 +3,16 @@ import ProfileHeader from "./ProfileHeader/ProfileHeader";
 import ProfileIntro from "./ProfileIntro/ProfileIntro";
 import ProfilePostsContainer from "../../containers/ProfilePostsContainer";
 import Preloader from "../SharedComponents/Preloader/Preloader";
-import React from 'react';
+import React, {FC} from 'react';
+import {useParams} from "react-router-dom";
+import {ProfilePropsType} from "../../containers/ProfileContainer";
 
-const Profile = (props) => {
-    if(!props.profile || props.isGettingProfileData || (+props.match.params.userId !== props.profile?.userId && props.match.params.userId)){
+type RouteParams = {
+    userId: string
+}
+const Profile: FC<ProfilePropsType> = (props) => {
+    const {userId} = useParams<RouteParams>();
+    if(!props.profile || props.isGettingProfileData || (+userId !== props.profile?.userId && userId)){
         return <div className='profile'><div className='profile__preloader-box>'> <Preloader /> </div></div>;
     }
     return(
@@ -30,7 +36,7 @@ const Profile = (props) => {
                         />
                     </div>
                     <div className='profile__col2'>
-                        <ProfilePostsContainer store={props.store} />
+                        <ProfilePostsContainer />
                     </div>
                     <div className='profile__col3'>
 
